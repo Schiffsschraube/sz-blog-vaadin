@@ -4,6 +4,7 @@ import com.github.warriorzz.blog.load.Loader;
 import com.github.warriorzz.blog.util.Post;
 import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -104,7 +105,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         HorizontalLayout content = new HorizontalLayout();
 
         VerticalLayout accordionLayout = new VerticalLayout();
-        accordionLayout.setId("accordion-layout");
+        accordionLayout.setId("sidebar-layout");
 
         Accordion accordion = new Accordion();
         accordion.setId("accordion");
@@ -133,6 +134,9 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         Tab impressum = new Tab("Impressum");
         impressumEtc.add(impressum);
 
+        Tab intern = new Tab("Intern");
+        impressumEtc.add(intern);
+
         impressumEtc.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
             if(event.getSelectedTab() == null)
                 return;
@@ -142,6 +146,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             if(event.getSelectedTab().equals(impressum)){
                 setCurrentPostToImpressum();
             }
+            if(event.getSelectedTab().equals(intern)) UI.getCurrent().navigate("intern");
             tabsBlog.setSelectedTab(null);
             tabsNews.setSelectedTab(null);
         });

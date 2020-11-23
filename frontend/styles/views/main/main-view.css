@@ -30,7 +30,7 @@ vaadin-tab[selected] {
   color: var(--lumo-primary-text-color);
 }
 
-#accordion-layout {
+#sidebar-layout {
   margin: 0 0 0 0;
   padding: 10px 0 0 30px;
 }
