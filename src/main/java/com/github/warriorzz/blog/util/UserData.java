@@ -2,8 +2,8 @@ package com.github.warriorzz.blog.util;
 
 public class UserData {
 
-    private boolean loggedIn = false;
-    private Role role = Role.USER;
+    private boolean loggedIn;
+    private Role role;
 
     public UserData(boolean loggedIn, Role role){
         this.loggedIn = loggedIn;
@@ -17,6 +17,41 @@ public class UserData {
     public void setRole(Role role){ this.role = role; }
 
     public enum Role {
-        ADMIN, USER;
+        ADMIN, USER, UNASSIGNED;
+
+        public static Role fromString(String string){
+            if(string.equalsIgnoreCase("admin")) return ADMIN;
+            if(string.equalsIgnoreCase("user")) return USER;
+            return UNASSIGNED;
+        }
+    }
+
+    public static class UserLogin {
+
+        private final String password;
+        private Role role = Role.UNASSIGNED;
+        private final String username;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public Role getRole() {
+            return role;
+        }
+
+        public void setRole(Role role) {
+            this.role = role;
+        }
+
+        public UserLogin(String username, String password) {
+            this.password = password;
+            this.username = username;
+        }
+
     }
 }
