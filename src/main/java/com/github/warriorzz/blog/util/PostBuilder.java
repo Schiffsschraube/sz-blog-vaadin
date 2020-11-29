@@ -1,6 +1,6 @@
 package com.github.warriorzz.blog.util;
 
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class PostBuilder {
@@ -21,30 +21,13 @@ public class PostBuilder {
         return this;
     }
 
-    public PostBuilder heading1(String header) {
-        H3 h3 = new H3(header);
-        h3.setId("no-margin-padding");
-        layout.add(h3);
-        return this;
-    }
-
     public PostBuilder title(String title) {
         this.title = title;
         return this;
     }
 
-    public PostBuilder heading2(String header) {
-        H4 h4 = new H4(header);
-        h4.setId("no-margin-padding");
-        layout.add(h4);
-        return this;
-    }
-
-    public PostBuilder text(String text) {
-        Span paragraph = new Span(text);
-        paragraph.setId("no-margin-padding");
-        layout.add(paragraph);
-        layout.setSizeFull();
+    public PostBuilder html(Html html) {
+        layout.add(html);
         return this;
     }
 
