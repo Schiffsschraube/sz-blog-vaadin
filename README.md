@@ -17,7 +17,7 @@ There are two ways to run the application:
 
 Clicking on the green run button will start the application.
 
-After the application has started, you can view your it at http://localhost:8080/ in your browser.
+After the application has started, you can view your it at http://localhost:80 in your browser.
 
 #### Eclipse
 - Right click on a project folder and select `Run As` --> `Maven build..` . After that a configuration window is opened.
@@ -37,4 +37,4 @@ or
 - `views` package in `src/main/java` contains the intern server-side Java views of your application.
 - `views` folder in `frontend/src/` contains the client-side JavaScript views of your application.
 - `util` folder in `src/main/java` contains the post structure and `UserData.java`, the class for storing the users' data for the current session.
-- `load` folder in `src/main/java` contains the classes for loading and displaying the posts.
+- `db` folder in `src/main/java` contains `DataBase.java`, the DataBase structure (MongoDB).
