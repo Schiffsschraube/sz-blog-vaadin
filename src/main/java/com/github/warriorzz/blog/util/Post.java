@@ -10,6 +10,7 @@ public class Post {
     private final String created;
     private final String lastUpdate;
     private final String category;
+    private boolean confirmed = false;
 
     public Post(VerticalLayout layout, String title, String author, String created, String lastUpdate, String category){
         this.category = category;
@@ -42,5 +43,12 @@ public class Post {
     }
 
     public String getCategory(){ return category; }
+
+    public boolean isConfirmed() { return confirmed; }
+
+    public Post setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+        return this;
+    }
 }
 

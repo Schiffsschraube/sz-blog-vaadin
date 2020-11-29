@@ -1,9 +1,10 @@
 package com.github.warriorzz.blog;
 
-import com.github.warriorzz.blog.load.Loader;
+import com.github.warriorzz.blog.db.DataBase;
 import com.github.warriorzz.blog.util.Post;
 import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -46,14 +47,13 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
     }
 
-    private void refresh() throws FileNotFoundException, UnsupportedEncodingException {
+    private void refresh() {
         setCurrentPostToStartArticle();
 
-        Loader loader = new Loader();
-
         // TODO: Tabs sortieren
-
-        for(Post post: loader.getPosts()) {
+        if(DataBase.getInstance().getPosts() == null) return;
+        for(Post post: DataBase.getInstance().getPosts()) {
+            if(!post.isConfirmed()) continue;
             if("News".equalsIgnoreCase(post.getCategory())){
                 Tab tab = new Tab(post.getTitle());
                 news.put(tab, post);
@@ -178,12 +178,12 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     }
 
     private void setCurrentPostToStartArticle(){
-        currentPost = new PostBuilder().title("Unser Blog!").category("Blog").text("Hier findet ihr unseren neuen Blog! Bei Fragen, Anmerkungen und Kritik, meldet euch bitte unter schiffsschraube@whgw.de! :)").build();
+        currentPost = new PostBuilder().title("Unser Blog!").category("Blog").html(new Html("<p>Hier findet ihr unseren neuen Blog! Bei Fragen, Anmerkungen und Kritik, meldet euch bitte unter schiffsschraube@whgw.de! :)</p>")).build();
         refreshPost();
     }
 
     private void setCurrentPostToImpressum() {
-        currentPost = new PostBuilder().title("Impressum").text("-- Text ---").build();
+        currentPost = new PostBuilder().title("Impressum").html(new Html("<p>-- Text ---</p>")).build();
         refreshPost();
     }
 
@@ -202,10 +202,6 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             }
             initialized = true;
         }
-        try {
-            refresh();
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        refresh();
     }
 }
