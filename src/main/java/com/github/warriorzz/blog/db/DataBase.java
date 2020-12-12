@@ -35,7 +35,7 @@ public class DataBase {
     }
 
     public UserData getUser(UserData.UserLogin login) {
-        HashMap<String, String> loginDataBase = userCollection.find(new Document("username", GFG.sha512(login.getUsername()))).first();
+        HashMap loginDataBase = userCollection.find(new Document("username", GFG.sha512(login.getUsername()))).first();
         if(loginDataBase == null) return null;
         if(Objects.requireNonNull(loginDataBase).get("password").equals(GFG.sha512(login.getPassword())))
             return new UserData(true, UserData.Role.fromString(String.valueOf(loginDataBase.get("role"))));
@@ -57,7 +57,12 @@ public class DataBase {
             builder.created((String) postMap.get("created"));
             builder.title((String) postMap.get("title"));
             for(String line: ((String) postMap.get("html")).split("\n")){
-                builder.html(new Html(line));
+                for(String lline: line.split("</p>")) {
+                    if(lline.startsWith("<p>"))
+                        builder.html(new Html(lline + "</p>"));
+                    else
+                        builder.html(new Html(lline));
+                }
             }
             posts.add(builder.build().setConfirmed(!postMap.get("confirmed").equals("false")));
         }
