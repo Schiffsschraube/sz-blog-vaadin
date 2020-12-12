@@ -45,7 +45,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             confirmLayout.add(new Span("Nothing in here. :)"));
         else {
             Accordion accordion = new Accordion();
-            DataBase.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).forEach(post -> addPostToConfirmlayout(post, accordion));
+            DataBase.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).forEach(post -> addPostToConfirmLayout(post, accordion));
             confirmLayout.add(accordion);
             accordion.close();
         }
@@ -163,7 +163,12 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         Button dialogUpload = new Button("Ja, hochladen.");
         dialogUpload.addClickListener(event -> {
-            if(createdPicker.isEmpty() || titleField.isEmpty() || checkboxCategory.isEmpty()) Notification.show("Bitte trage oben alles ein!");
+            if(createdPicker.isEmpty() || titleField.isEmpty() || checkboxCategory.isEmpty()){
+                dialog.close();
+                Notification.show("Bitte trage oben alles ein!");
+                return;
+            }
+
             createFileFromEditor(editor.getHtmlValue(), authorField.isEmpty() ? "" : authorField.getValue(),
                     titleField.getValue(),
                     createdPicker.getValue().toString(),
@@ -234,7 +239,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         refresh();
     }
 
-    private void addPostToConfirmlayout(Post post, Accordion accordion) {
+    private void addPostToConfirmLayout(Post post, Accordion accordion) {
         VerticalLayout postLayout = new VerticalLayout();
 
         H2 heading = new H2(post.getTitle());

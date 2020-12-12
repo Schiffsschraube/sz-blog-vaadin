@@ -2,9 +2,7 @@ package com.github.warriorzz.blog;
 
 import com.github.warriorzz.blog.db.DataBase;
 import com.github.warriorzz.blog.util.Post;
-import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -17,6 +15,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.StreamResource;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.*;
 import java.util.HashMap;
@@ -31,8 +30,6 @@ import java.util.Objects;
 @PWA(name = "sz-blog-vaadin", shortName = "sz-blog-vaadin", enableInstallPrompt = false)
 public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver {
 
-    /*private final Tabs menu;
-    private H1 viewTitle;*/
     private boolean initialized = false;
     private volatile Post currentPost;
     private final VerticalLayout contentGoesHere = new VerticalLayout();
@@ -53,7 +50,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         // TODO: Tabs sortieren
         if(DataBase.getInstance().getPosts() == null) return;
         for(Post post: DataBase.getInstance().getPosts()) {
-            if(!post.isConfirmed()) continue;
+            if(post.isConfirmed()) continue;
             if("News".equalsIgnoreCase(post.getCategory())){
                 Tab tab = new Tab(post.getTitle());
                 news.put(tab, post);
@@ -167,23 +164,22 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         text.setId("post-author");
         HorizontalLayout titleAndAuthor = new HorizontalLayout();
         titleAndAuthor.add(heading);
-        if(currentPost.getAuthor() != null) titleAndAuthor.add(text);
+        if(!currentPost.getAuthor().equals("")) titleAndAuthor.add(text);
 
         Paragraph times = new Paragraph(currentPost.getCreated() + ((currentPost.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + currentPost.getLastUpdate()) : ""));
         times.setId("post-times");
         contentGoesHere.add(titleAndAuthor);
         contentGoesHere.add(currentPost.getLayout());
         if(currentPost.getCreated() != null) contentGoesHere.add(times);
-
     }
 
     private void setCurrentPostToStartArticle(){
-        currentPost = new PostBuilder().title("Unser Blog!").category("Blog").html(new Html("<p>Hier findet ihr unseren neuen Blog! Bei Fragen, Anmerkungen und Kritik, meldet euch bitte unter schiffsschraube@whgw.de! :)</p>")).build();
+        currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.load().get("START_ARTICLE_NAME"))).findFirst().get();
         refreshPost();
     }
 
     private void setCurrentPostToImpressum() {
-        currentPost = new PostBuilder().title("Impressum").html(new Html("<p>-- Text ---</p>")).build();
+        currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.load().get("IMPRESSUM_NAME"))).findFirst().get();
         refreshPost();
     }
 
