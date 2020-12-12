@@ -93,6 +93,12 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         VerticalLayout insertLayout = new VerticalLayout();
         confirmLayout = new VerticalLayout();
+
+        Tab adminTab = new Tab("Admin-Bereich");
+        if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.ADMIN){
+            tabs.add(adminTab);
+        }
+
         VerticalLayout adminLayout = new VerticalLayout();
         confirmLayout.setWidth("50vw");
 
@@ -100,10 +106,17 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             if(event.getSelectedTab().equals(insertTab)) {
                 confirmLayout.setVisible(false);
                 insertLayout.setVisible(true);
+                adminLayout.setVisible(false);
             }
             if(event.getSelectedTab().equals(confirmTab)) {
                 confirmLayout.setVisible(true);
                 insertLayout.setVisible(false);
+                adminLayout.setVisible(false);
+            }
+            if(event.getSelectedTab().equals(adminTab)){
+                confirmLayout.setVisible(false);
+                insertLayout.setVisible(false);
+                adminLayout.setVisible(true);
             }
         });
 
@@ -179,8 +192,12 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         insertLayout.add(previewLayout);
 
         //ADMIN TODO
+        adminLayout.setWidth("50vw");
 
-        contentGoesHere.add(confirmLayout, insertLayout, adminLayout);
+        if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.ADMIN)
+            contentGoesHere.add(confirmLayout, insertLayout, adminLayout);
+        else if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.USER)
+            contentGoesHere.add(insertLayout);
         content.add(contentGoesHere);
         add(headBar);
         add(content);
