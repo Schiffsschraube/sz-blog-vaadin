@@ -133,7 +133,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         DateTimePicker createdPicker = new DateTimePicker();
         createdPicker.setLocale(Locale.GERMANY);
 
-        ListDataProvider<String> providerCategory = DataProvider.ofItems("Blog", "News");
+        ListDataProvider<String> providerCategory = DataProvider.fromStream(DataBase.getInstance().getCategories().stream());
         ComboBox<String> checkboxCategory = new ComboBox<>();
         checkboxCategory.setDataProvider(providerCategory);
 

@@ -20,6 +20,7 @@ public class DataBase {
 
     private final MongoCollection<HashMap> userCollection;
     private final MongoCollection<HashMap> postCollection;
+    private final MongoCollection<HashMap> categoryCollection;
 
     private DataBase() {
         Dotenv dotenv = Dotenv.load();
@@ -32,6 +33,7 @@ public class DataBase {
         MongoDatabase database = client.getDatabase(dotenv.get("MONGO_DATABASE"));
         userCollection = database.getCollection("UserData", HashMap.class);
         postCollection = database.getCollection("PostData", HashMap.class);
+        categoryCollection = database.getCollection("CategoryData", HashMap.class);
     }
 
     public UserData getUser(UserData.UserLogin login) {
@@ -64,7 +66,7 @@ public class DataBase {
                         builder.html(new Html(lline));
                 }
             }
-            posts.add(builder.build().setConfirmed(!postMap.get("confirmed").equals("false")));
+            posts.add(builder.build().setConfirmed(postMap.get("confirmed").equals("true")));
         }
         return posts;
     }
@@ -89,6 +91,16 @@ public class DataBase {
         postloginHashMap.put("confirmed", "false");
 
         postCollection.insertOne(postloginHashMap);
+    }
+
+    public ArrayList<String> getCategories(){
+        ArrayList<String> categories = new ArrayList<>();
+        HashMap map = categoryCollection.find().first();
+        assert map != null;
+        map.keySet().forEach(it -> {
+            if(!it.equals("_id")) categories.add(map.get(it).toString());
+        });
+        return categories;
     }
 
     private static DataBase instance;

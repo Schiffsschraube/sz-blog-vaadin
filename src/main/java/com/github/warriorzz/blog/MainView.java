@@ -33,12 +33,16 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     private boolean initialized = false;
     private volatile Post currentPost;
     private final VerticalLayout contentGoesHere = new VerticalLayout();
-    private final HashMap<Tab, Post> news = new HashMap<>();
-    private final HashMap<Tab, Post> blog = new HashMap<>();
+    /*private final HashMap<Tab, Post> news = new HashMap<>();
+    private final HashMap<Tab, Post> blog = new HashMap<>();*/
 
-    private Tabs tabsBlog;
-    private Tabs tabsNews;
+    private Accordion accordion;
+    /*private Tabs tabsBlog;
+    private Tabs tabsNews;*/
     private Tabs impressumEtc;
+
+    private final HashMap<String, Tabs> tabsList = new HashMap<>();
+    private final HashMap<Tabs, HashMap<Tab, Post>> layoutMap = new HashMap<>();
 
     public MainView() {
 
@@ -47,22 +51,41 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     private void refresh() {
         setCurrentPostToStartArticle();
 
+        layoutMap.keySet().forEach(it -> accordion.remove(it));
+        tabsList.clear();
+        layoutMap.clear();
+
+        for(String category: DataBase.getInstance().getCategories()) addCategory(category);
+
         // TODO: Tabs sortieren
         if(DataBase.getInstance().getPosts() == null) return;
         for(Post post: DataBase.getInstance().getPosts()) {
-            if(post.isConfirmed()) continue;
-            if("News".equalsIgnoreCase(post.getCategory())){
-                Tab tab = new Tab(post.getTitle());
-                news.put(tab, post);
-                tabsNews.add(tab);
-            }
-            if("Blog".equalsIgnoreCase(post.getCategory())){
-                Tab tab = new Tab(post.getTitle());
-                blog.put(tab, post);
-                tabsBlog.add(tab);
+            if(!post.isConfirmed()) continue;
+            for(String tabs: tabsList.keySet()) {
+                if(tabs.equals(post.getCategory())) {
+                    System.out.println("Test2");
+                    Tab tab = new Tab(post.getTitle());
+                    layoutMap.get(tabsList.get(post.getCategory())).put(tab, post);
+                    tabsList.get(post.getCategory()).add(tab);
+                }
             }
         }
-        tabsBlog.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
+
+        for(Tabs tabs: tabsList.values()) {
+            tabs.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
+                if(event.getSelectedTab() == null) return;
+                if(layoutMap.get(tabs).containsKey(event.getSelectedTab()))
+                    currentPost = layoutMap.get(tabs).get(event.getSelectedTab());
+                refreshPost();
+                for(Tabs tabs2: tabsList.values()){
+                    if(tabs != tabs2){
+                        tabs2.setSelectedTab(null);
+                    }
+                }
+                impressumEtc.setSelectedTab(null);
+            });
+        }
+        /* tabsBlog.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
             if(event.getSelectedTab() == null) return;
             if(blog.containsKey(event.getSelectedTab()))
                 currentPost = blog.get(event.getSelectedTab());
@@ -77,7 +100,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             refreshPost();
             tabsBlog.setSelectedTab(null);
             impressumEtc.setSelectedTab(null);
-        });
+        });*/
 
     }
 
@@ -104,22 +127,11 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         VerticalLayout accordionLayout = new VerticalLayout();
         accordionLayout.setId("sidebar-layout");
 
-        Accordion accordion = new Accordion();
+        accordion = new Accordion();
         accordion.setId("accordion");
         accordionLayout.add(accordion);
 
         accordion.close();
-
-        tabsBlog = new Tabs();
-        tabsBlog.setOrientation(Tabs.Orientation.VERTICAL);
-        tabsNews = new Tabs();
-        tabsNews.setOrientation(Tabs.Orientation.VERTICAL);
-
-        tabsBlog.setAutoselect(false);
-        tabsNews.setAutoselect(false);
-
-        accordion.add("Newsticker", tabsNews);
-        accordion.add("Blog", tabsBlog);
 
         impressumEtc = new Tabs();
         accordionLayout.add(impressumEtc);
@@ -144,8 +156,11 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
                 setCurrentPostToImpressum();
             }
             if(event.getSelectedTab().equals(intern)) UI.getCurrent().navigate("intern");
-            tabsBlog.setSelectedTab(null);
-            tabsNews.setSelectedTab(null);
+            for(Tabs tabs2: tabsList.values()){
+                if(impressumEtc != tabs2){
+                    tabs2.setSelectedTab(null);
+                }
+            }
         });
         impressumEtc.setSelectedTab(startArticle);
 
@@ -171,6 +186,15 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         contentGoesHere.add(titleAndAuthor);
         contentGoesHere.add(currentPost.getLayout());
         if(currentPost.getCreated() != null) contentGoesHere.add(times);
+    }
+
+    private void addCategory(String name) {
+        Tabs tabs = new Tabs();
+        tabs.setOrientation(Tabs.Orientation.VERTICAL);
+        tabs.setAutoselect(false);
+        accordion.add(name, tabs);
+        tabsList.put(name, tabs);
+        layoutMap.put(tabs, new HashMap<>());
     }
 
     private void setCurrentPostToStartArticle(){
