@@ -28,6 +28,7 @@ import com.vaadin.flow.server.StreamResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -171,7 +172,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             createFileFromEditor(editor.getHtmlValue(), authorField.isEmpty() ? "" : authorField.getValue(),
                     titleField.getValue(),
-                    createdPicker.getValue().toString(),
+                    createdPicker.getValue(),
                     null, checkboxCategory.getValue());
             dialog.close();
             editor.clear();
@@ -208,7 +209,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         add(content);
     }
 
-    private void createFileFromEditor(String htmlContent, String author, String title, String created, String lastUpdate, String category){
+    private void createFileFromEditor(String htmlContent, String author, String title, LocalDateTime created, String lastUpdate, String category){
         PostBuilder builder = new PostBuilder();
         builder.author(author);
         builder.title(title);

@@ -2,17 +2,19 @@ package com.github.warriorzz.blog.util;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-public class Post {
+import java.time.LocalDateTime;
+
+public class Post implements Comparable<Post>{
 
     private final VerticalLayout layout;
     private final String title;
     private final String author;
-    private final String created;
+    private final LocalDateTime created;
     private final String lastUpdate;
     private final String category;
     private boolean confirmed = false;
 
-    public Post(VerticalLayout layout, String title, String author, String created, String lastUpdate, String category){
+    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, String lastUpdate, String category){
         this.category = category;
         this.layout = layout;
         this.title = title;
@@ -34,7 +36,7 @@ public class Post {
         return author;
     }
 
-    public String getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
@@ -50,5 +52,11 @@ public class Post {
         this.confirmed = confirmed;
         return this;
     }
-}
 
+    @Override
+    public int compareTo(Post o) {
+        if(o.getCreated().equals(created)) return 0;
+        if(o.getCreated().isBefore(created)) return -1;
+        return 1;
+    }
+}

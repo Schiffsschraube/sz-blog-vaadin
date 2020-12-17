@@ -12,6 +12,7 @@ import com.vaadin.flow.component.Html;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class DataBase {
             builder.category((String) postMap.get("category"));
             builder.author((String) postMap.get("author"));
             builder.lastUpdate((String) postMap.get("lastupdate"));
-            builder.created((String) postMap.get("created"));
+            builder.created(LocalDateTime.parse((String) postMap.get("created")));
             builder.title((String) postMap.get("title"));
             for(String line: ((String) postMap.get("html")).split("\n")){
                 for(String lline: line.split("</p>")) {
@@ -85,7 +86,7 @@ public class DataBase {
         postloginHashMap.put("title", post.getTitle());
         postloginHashMap.put("author", post.getAuthor());
         postloginHashMap.put("lastupdate", post.getLastUpdate());
-        postloginHashMap.put("created", post.getCreated());
+        postloginHashMap.put("created", post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
         postloginHashMap.put("html", html);
         postloginHashMap.put("confirmed", "false");

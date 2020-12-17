@@ -20,6 +20,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -33,12 +34,8 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     private boolean initialized = false;
     private volatile Post currentPost;
     private final VerticalLayout contentGoesHere = new VerticalLayout();
-    /*private final HashMap<Tab, Post> news = new HashMap<>();
-    private final HashMap<Tab, Post> blog = new HashMap<>();*/
 
     private Accordion accordion;
-    /*private Tabs tabsBlog;
-    private Tabs tabsNews;*/
     private Tabs impressumEtc;
 
     private final HashMap<String, Tabs> tabsList = new HashMap<>();
@@ -59,7 +56,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
         // TODO: Tabs sortieren
         if(DataBase.getInstance().getPosts() == null) return;
-        for(Post post: DataBase.getInstance().getPosts()) {
+        for(Post post: DataBase.getInstance().getPosts().stream().sorted().collect(Collectors.toList())) {
             if(!post.isConfirmed()) continue;
             for(String tabs: tabsList.keySet()) {
                 if(tabs.equals(post.getCategory())) {
@@ -85,23 +82,6 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
                 impressumEtc.setSelectedTab(null);
             });
         }
-        /* tabsBlog.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
-            if(event.getSelectedTab() == null) return;
-            if(blog.containsKey(event.getSelectedTab()))
-                currentPost = blog.get(event.getSelectedTab());
-            refreshPost();
-            tabsNews.setSelectedTab(null);
-            impressumEtc.setSelectedTab(null);
-        });
-        tabsNews.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
-            if(event.getSelectedTab() == null) return;
-            if(news.containsKey(event.getSelectedTab()))
-                currentPost = news.get(event.getSelectedTab());
-            refreshPost();
-            tabsBlog.setSelectedTab(null);
-            impressumEtc.setSelectedTab(null);
-        });*/
-
     }
 
     private void initialize() throws IOException {

@@ -3,12 +3,14 @@ package com.github.warriorzz.blog.util;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+import java.time.LocalDateTime;
+
 public class PostBuilder {
 
     VerticalLayout layout;
     private String title;
     private String author;
-    private String created;
+    private LocalDateTime created;
     private String lastUpdate;
     private String category;
 
@@ -36,7 +38,7 @@ public class PostBuilder {
         return this;
     }
 
-    public PostBuilder created(String created) {
+    public PostBuilder created(LocalDateTime created) {
         this.created = created;
         return this;
     }
