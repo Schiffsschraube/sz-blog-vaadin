@@ -149,7 +149,6 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         Button previewButton = new Button("Preview");
         previewButton.addClickListener(event -> {
-            System.out.println(editor.getHtmlValue());
             previewLayout.removeAll();
             for(String line: editor.getHtmlValue().split("\n")) {
                 previewLayout.add(new Html(line));

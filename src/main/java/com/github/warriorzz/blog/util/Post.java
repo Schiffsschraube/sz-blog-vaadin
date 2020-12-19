@@ -4,7 +4,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.time.LocalDateTime;
 
-public class Post implements Comparable<Post>{
+public class Post implements Comparable<Post> {
 
     private final VerticalLayout layout;
     private final String title;
@@ -12,15 +12,17 @@ public class Post implements Comparable<Post>{
     private final LocalDateTime created;
     private final String lastUpdate;
     private final String category;
+    private final String id;
     private boolean confirmed = false;
 
-    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, String lastUpdate, String category){
+    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, String lastUpdate, String category, String id){
         this.category = category;
         this.layout = layout;
         this.title = title;
         this.author = author;
         this.created = created;
         this.lastUpdate = lastUpdate;
+        this.id = id;
         layout.setId("post-layout");
     }
 
@@ -45,6 +47,8 @@ public class Post implements Comparable<Post>{
     }
 
     public String getCategory(){ return category; }
+
+    public String getID() { return id; }
 
     public boolean isConfirmed() { return confirmed; }
 

@@ -13,6 +13,7 @@ public class PostBuilder {
     private LocalDateTime created;
     private String lastUpdate;
     private String category;
+    private String id;
 
     public PostBuilder() {
         layout = new VerticalLayout();
@@ -48,7 +49,12 @@ public class PostBuilder {
         return this;
     }
 
+    public PostBuilder id(String id) {
+        this.id = id;
+        return this;
+    }
+
     public Post build() {
-        return new Post(layout, title, author, created, lastUpdate, category);
+        return new Post(layout, title, author, created, lastUpdate, category, id);
     }
 }

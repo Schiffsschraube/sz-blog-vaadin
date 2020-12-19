@@ -59,6 +59,7 @@ public class DataBase {
             builder.lastUpdate((String) postMap.get("lastupdate"));
             builder.created(LocalDateTime.parse((String) postMap.get("created")));
             builder.title((String) postMap.get("title"));
+            builder.id(postMap.get("_id").toString());
             for(String line: ((String) postMap.get("html")).split("\n")){
                 for(String lline: line.split("</p>")) {
                     if(lline.startsWith("<p>"))
@@ -102,6 +103,20 @@ public class DataBase {
             if(!it.equals("_id")) categories.add(map.get(it).toString());
         });
         return categories;
+    }
+
+    public void updatePost(Post post) {
+        HashMap<String, String> postloginHashMap = new HashMap<>();
+
+        postloginHashMap.put("title", post.getTitle());
+        postloginHashMap.put("author", post.getAuthor());
+        postloginHashMap.put("lastupdate", LocalDateTime.now().toString());
+        postloginHashMap.put("created", post.getCreated().toString());
+        postloginHashMap.put("category", post.getCategory());
+        postloginHashMap.put("html", post.getLayout().toString());
+        postloginHashMap.put("confirmed", String.valueOf(post.isConfirmed()));
+
+        postCollection.replaceOne(new Document("_id", post.getID()), postloginHashMap);
     }
 
     private static DataBase instance;
