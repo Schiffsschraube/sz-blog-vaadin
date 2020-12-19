@@ -18,6 +18,8 @@ import com.vaadin.flow.server.StreamResource;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,7 +62,6 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             if(!post.isConfirmed()) continue;
             for(String tabs: tabsList.keySet()) {
                 if(tabs.equals(post.getCategory())) {
-                    System.out.println("Test2");
                     Tab tab = new Tab(post.getTitle());
                     layoutMap.get(tabsList.get(post.getCategory())).put(tab, post);
                     tabsList.get(post.getCategory()).add(tab);
@@ -161,7 +162,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         titleAndAuthor.add(heading);
         if(!currentPost.getAuthor().equals("")) titleAndAuthor.add(text);
 
-        Paragraph times = new Paragraph(currentPost.getCreated() + ((currentPost.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + currentPost.getLastUpdate()) : ""));
+        Paragraph times = new Paragraph(currentPost.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) + " Uhr" + ((currentPost.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + currentPost.getLastUpdate()) : ""));
         times.setId("post-times");
         contentGoesHere.add(titleAndAuthor);
         contentGoesHere.add(currentPost.getLayout());
