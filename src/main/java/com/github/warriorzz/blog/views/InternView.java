@@ -104,6 +104,9 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         VerticalLayout adminLayout = new VerticalLayout();
         confirmLayout.setWidth("50vw");
 
+        Tab leaveTab = new Tab("Leave");
+        tabs.add(leaveTab);
+
         tabs.addSelectedChangeListener(event -> {
             if(event.getSelectedTab().equals(insertTab)) {
                 confirmLayout.setVisible(false);
@@ -119,6 +122,9 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
                 confirmLayout.setVisible(false);
                 insertLayout.setVisible(false);
                 adminLayout.setVisible(true);
+            }
+            if(event.getSelectedTab() .equals(leaveTab)) {
+                UI.getCurrent().navigate("");
             }
         });
 
@@ -173,7 +179,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             createFileFromEditor(editor.getHtmlValue(), authorField.isEmpty() ? "" : authorField.getValue(),
                     titleField.getValue(),
-                    createdPicker.getValue(),
+                    LocalDateTime.now(),
                     null, checkboxCategory.getValue());
             dialog.close();
             editor.clear();
@@ -269,7 +275,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             Button confirm = new Button("Ja, der Post soll erscheinen.");
             confirm.addClickListener(event1 -> {
                 DataBase.getInstance().updatePost(post.setConfirmed(true), true, false);
-
+                accordion.remove(postLayout);
                 dialog.close();
             });
             dialogLayout.add(confirm);
