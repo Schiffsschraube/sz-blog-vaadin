@@ -138,9 +138,10 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         ListDataProvider<String> providerCategory = DataProvider.fromStream(DataBase.getInstance().getCategories().stream());
         ComboBox<String> checkboxCategory = new ComboBox<>();
         checkboxCategory.setDataProvider(providerCategory);
+        checkboxCategory.setPlaceholder("Kategorie");
 
         HorizontalLayout infoLayout = new HorizontalLayout();
-        infoLayout.add(authorField, titleField, createdPicker, checkboxCategory);
+        infoLayout.add(titleField, authorField,  /*createdPicker, */checkboxCategory);
 
         RichTextEditor editor = new RichTextEditor();
         editor.setWidth("50vw");
@@ -164,7 +165,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         Button dialogUpload = new Button("Ja, hochladen.");
         dialogUpload.addClickListener(event -> {
-            if(createdPicker.isEmpty() || titleField.isEmpty() || checkboxCategory.isEmpty()){
+            if(/*createdPicker.isEmpty() || */titleField.isEmpty() || checkboxCategory.isEmpty()){
                 dialog.close();
                 Notification.show("Bitte trage oben alles ein!");
                 return;
@@ -267,7 +268,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             Button confirm = new Button("Ja, der Post soll erscheinen.");
             confirm.addClickListener(event1 -> {
-                DataBase.getInstance().updatePost(post.setConfirmed(true));
+                DataBase.getInstance().updatePost(post.setConfirmed(true), true, false);
 
                 dialog.close();
             });

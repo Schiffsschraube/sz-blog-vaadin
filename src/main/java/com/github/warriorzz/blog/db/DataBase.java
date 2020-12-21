@@ -10,7 +10,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vaadin.flow.component.Html;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -107,13 +106,13 @@ public class DataBase {
         return categories;
     }
 
-    public void updatePost(Post post) {
+    public void updatePost(Post post, boolean created, boolean lastUpdate) {
         HashMap<String, String> postloginHashMap = new HashMap<>();
 
         postloginHashMap.put("title", post.getTitle());
         postloginHashMap.put("author", post.getAuthor());
-        postloginHashMap.put("lastupdate", LocalDateTime.now().toString());
-        postloginHashMap.put("created", post.getCreated().toString());
+        postloginHashMap.put("lastupdate", lastUpdate ? LocalDateTime.now().toString() : post.getLastUpdate());
+        postloginHashMap.put("created", created ? LocalDateTime.now().toString() : post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
         postloginHashMap.put("html", post.getHtml());
         postloginHashMap.put("confirmed", String.valueOf(post.isConfirmed()));
