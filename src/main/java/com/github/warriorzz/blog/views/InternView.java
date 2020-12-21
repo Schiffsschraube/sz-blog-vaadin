@@ -29,6 +29,7 @@ import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -250,7 +251,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         titleAndAuthor.add(heading);
         if(post.getAuthor() != null) titleAndAuthor.add(text);
 
-        Paragraph times = new Paragraph(post.getCreated() + ((post.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + post.getLastUpdate()) : ""));
+        Paragraph times = new Paragraph(post.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) + " Uhr" + ((post.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + post.getLastUpdate()) : ""));
         times.setId("post-times");
         postLayout.add(titleAndAuthor);
         postLayout.add(post.getLayout());
@@ -258,12 +259,49 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         Button accept = new Button("Accept");
         accept.addClickListener(event -> {
-           //TODO: CONFIRMED STATUS ÄNDERN
+            Dialog dialog = new Dialog();
+            dialog.setCloseOnEsc(false);
+            dialog.setDraggable(false);
+            VerticalLayout dialogLayout = new VerticalLayout();
+            dialogLayout.add("Sind Sie sich sicher?");
+
+            Button confirm = new Button("Ja, der Post soll erscheinen.");
+            confirm.addClickListener(event1 -> {
+                DataBase.getInstance().updatePost(post.setConfirmed(true));
+
+                dialog.close();
+            });
+            dialogLayout.add(confirm);
+
+            Button decline = new Button("Nein, soll er nicht.");
+            decline.addClickListener(event2 -> dialog.close());
+            dialogLayout.add(decline);
+
+            dialog.add(dialogLayout);
+            dialog.open();
         });
 
         Button decline = new Button("Decline");
         decline.addClickListener(event -> {
-           //TODO: POST LÖSCHEN
+            Dialog dialog = new Dialog();
+            dialog.setCloseOnEsc(false);
+            dialog.setDraggable(false);
+
+            VerticalLayout dialogLayout = new VerticalLayout();
+            dialogLayout.add("Sind Sie sich sicher?");
+
+            Button confirm = new Button("Ja, der Post soll gelöscht werden.");
+            confirm.addClickListener(event1 -> {
+
+            });
+            dialogLayout.add(confirm);
+
+            Button decline1 = new Button("Nein, soll er nicht.");
+            decline1.addClickListener(event2 -> dialog.close());
+            dialogLayout.add(decline1);
+
+            dialog.add(dialogLayout);
+            dialog.open();
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();

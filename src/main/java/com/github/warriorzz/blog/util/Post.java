@@ -13,9 +13,10 @@ public class Post implements Comparable<Post> {
     private final String lastUpdate;
     private final String category;
     private final String id;
+    private String html;
     private boolean confirmed = false;
 
-    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, String lastUpdate, String category, String id){
+    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, String lastUpdate, String category, String id, String html){
         this.category = category;
         this.layout = layout;
         this.title = title;
@@ -23,6 +24,7 @@ public class Post implements Comparable<Post> {
         this.created = created;
         this.lastUpdate = lastUpdate;
         this.id = id;
+        this.html = html;
         layout.setId("post-layout");
     }
 
@@ -52,8 +54,15 @@ public class Post implements Comparable<Post> {
 
     public boolean isConfirmed() { return confirmed; }
 
+    public String getHtml() { return html; }
+
     public Post setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
+        return this;
+    }
+
+    public Post setHtml(String html) {
+        this.html = html;
         return this;
     }
 

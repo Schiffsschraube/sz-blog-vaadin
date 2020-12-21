@@ -10,7 +10,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vaadin.flow.component.Html;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,7 +70,7 @@ public class DataBase {
                         builder.html(new Html(lline));
                 }
             }
-            posts.add(builder.build().setConfirmed(postMap.get("confirmed").equals("true")));
+            posts.add(builder.build().setConfirmed(postMap.get("confirmed").equals("true")).setHtml(postMap.get("html").toString()));
         }
         return posts;
     }
@@ -113,10 +115,11 @@ public class DataBase {
         postloginHashMap.put("lastupdate", LocalDateTime.now().toString());
         postloginHashMap.put("created", post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
-        postloginHashMap.put("html", post.getLayout().toString());
+        postloginHashMap.put("html", post.getHtml());
         postloginHashMap.put("confirmed", String.valueOf(post.isConfirmed()));
+        System.out.println(post.getID());
 
-        postCollection.replaceOne(new Document("_id", post.getID()), postloginHashMap);
+        postCollection.replaceOne(new Document("_id", new ObjectId(post.getID())), postloginHashMap);
     }
 
     private static DataBase instance;

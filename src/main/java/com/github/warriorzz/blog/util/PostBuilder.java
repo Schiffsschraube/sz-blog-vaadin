@@ -14,6 +14,7 @@ public class PostBuilder {
     private String lastUpdate;
     private String category;
     private String id;
+    private String html;
 
     public PostBuilder() {
         layout = new VerticalLayout();
@@ -31,6 +32,7 @@ public class PostBuilder {
 
     public PostBuilder html(Html html) {
         layout.add(html);
+        this.html += html + "\r\n";
         return this;
     }
 
@@ -55,6 +57,6 @@ public class PostBuilder {
     }
 
     public Post build() {
-        return new Post(layout, title, author, created, lastUpdate, category, id);
+        return new Post(layout, title, author, created, lastUpdate, category, id, html);
     }
 }
