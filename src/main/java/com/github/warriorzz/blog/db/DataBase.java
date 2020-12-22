@@ -25,14 +25,13 @@ public class DataBase {
     private final MongoCollection<HashMap> categoryCollection;
 
     private DataBase() {
-        Dotenv dotenv = Dotenv.load();
-        MongoClient client = MongoClients.create("mongodb+srv://"
-                + dotenv.get("MONGO_USERNAME")
-                + ":" + dotenv.get("MONGO_PASSWORD")
-                + "@" + dotenv.get("MONGO_HOST")
-                + "/" + dotenv.get("MONGO_DATABASE")
+        MongoClient client = MongoClients.create("mongodb://"
+                + Dotenv.configure().ignoreIfMissing().load().get("MONGO_USERNAME")
+                + ":" + Dotenv.configure().ignoreIfMissing().load().get("MONGO_PASSWORD")
+                + "@" + Dotenv.configure().ignoreIfMissing().load().get("MONGO_HOST")
+                + "/" + Dotenv.configure().ignoreIfMissing().load().get("MONGO_DATABASE")
                 + "?retryWrites=true&w=majority");
-        MongoDatabase database = client.getDatabase(dotenv.get("MONGO_DATABASE"));
+        MongoDatabase database = client.getDatabase(Dotenv.configure().ignoreIfMissing().load().get("MONGO_DATABASE"));
         userCollection = database.getCollection("UserData", HashMap.class);
         postCollection = database.getCollection("PostData", HashMap.class);
         categoryCollection = database.getCollection("CategoryData", HashMap.class);

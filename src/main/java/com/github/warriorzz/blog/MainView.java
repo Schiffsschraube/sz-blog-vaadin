@@ -2,7 +2,9 @@ package com.github.warriorzz.blog;
 
 import com.github.warriorzz.blog.db.DataBase;
 import com.github.warriorzz.blog.util.Post;
+import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver {
 
     private boolean initialized = false;
-    private volatile Post currentPost;
+    private Post currentPost = null;
     private final VerticalLayout contentGoesHere = new VerticalLayout();
 
     private Accordion accordion;
@@ -152,6 +154,8 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     }
 
     private void refreshPost() {
+        if(currentPost == null)
+            return;
         contentGoesHere.removeAll();
 
         H2 heading = new H2(currentPost.getTitle());
@@ -179,12 +183,14 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     }
 
     private void setCurrentPostToStartArticle(){
-        currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.load().get("START_ARTICLE_NAME"))).findFirst().get();
+        if(DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))))
+            currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))).findFirst().get();
         refreshPost();
     }
 
     private void setCurrentPostToImpressum() {
-        currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.load().get("IMPRESSUM_NAME"))).findFirst().get();
+        if(DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))))
+            currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))).findFirst().get();
         refreshPost();
     }
 
@@ -195,6 +201,10 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        if(DataBase.getInstance().getPosts() == null) {
+            DataBase.getInstance().insertPost(new PostBuilder().author("").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(),"<p> --- TEXT --- </p>");
+            DataBase.getInstance().insertPost(new PostBuilder().author("").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(),"<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
+        }
         if(!initialized){
             try {
                 initialize();

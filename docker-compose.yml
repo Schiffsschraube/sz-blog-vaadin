@@ -1,0 +1,40 @@
+version: '3'
+services:
+  backend:
+    env_file:
+      - .env
+    build: .
+    restart: unless-stopped
+    container_name: sz_backend
+    depends_on:
+      - mongo
+    ports:
+      - 80:8080
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_USERNAME=databaseuserlol
+      - MONGO_PASSWORD=databaseuserlol
+      - MONGO_DATABASE=sz-database
+      - START_ARTICLE_NAME=Unser Blog!
+      - IMPRESSUM_NAME=Impressum
+    networks:
+      - app
+
+  mongo:
+    image: mongo
+    container_name: sz_database
+    environment:
+      - MONGO_INITDB_DATABASE=sz-database
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - sz_data:/data/db
+    networks:
+      - app
+
+volumes:
+  sz_data:
+
+networks:
+  app:
