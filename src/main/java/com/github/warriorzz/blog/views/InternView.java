@@ -216,7 +216,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         add(content);
     }
 
-    private void createFileFromEditor(String htmlContent, String author, String title, LocalDateTime created, String lastUpdate, String category){
+    private void createFileFromEditor(String htmlContent, String author, String title, LocalDateTime created, LocalDateTime lastUpdate, String category){
         PostBuilder builder = new PostBuilder();
         builder.author(author);
         builder.title(title);

@@ -10,13 +10,13 @@ public class Post implements Comparable<Post> {
     private final String title;
     private final String author;
     private final LocalDateTime created;
-    private final String lastUpdate;
+    private final LocalDateTime lastUpdate;
     private final String category;
     private final String id;
     private String html;
     private boolean confirmed = false;
 
-    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, String lastUpdate, String category, String id, String html){
+    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html){
         this.category = category;
         this.layout = layout;
         this.title = title;
@@ -44,7 +44,7 @@ public class Post implements Comparable<Post> {
         return created;
     }
 
-    public String getLastUpdate() {
+    public LocalDateTime getLastUpdate() {
         return lastUpdate;
     }
 

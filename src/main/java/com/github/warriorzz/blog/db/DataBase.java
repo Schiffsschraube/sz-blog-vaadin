@@ -56,7 +56,7 @@ public class DataBase {
             PostBuilder builder = new PostBuilder();
             builder.category((String) postMap.get("category"));
             builder.author((String) postMap.get("author"));
-            builder.lastUpdate((String) postMap.get("lastupdate"));
+            builder.lastUpdate(LocalDateTime.parse((String) postMap.get("lastupdate")));
             builder.created(LocalDateTime.parse((String) postMap.get("created")));
             builder.title((String) postMap.get("title"));
             builder.id(postMap.get("_id").toString());
@@ -86,7 +86,7 @@ public class DataBase {
 
         postloginHashMap.put("title", post.getTitle());
         postloginHashMap.put("author", post.getAuthor());
-        postloginHashMap.put("lastupdate", post.getLastUpdate());
+        postloginHashMap.put("lastupdate", post.getLastUpdate().toString());
         postloginHashMap.put("created", post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
         postloginHashMap.put("html", html);
@@ -110,7 +110,7 @@ public class DataBase {
 
         postloginHashMap.put("title", post.getTitle());
         postloginHashMap.put("author", post.getAuthor());
-        postloginHashMap.put("lastupdate", lastUpdate ? LocalDateTime.now().toString() : post.getLastUpdate());
+        postloginHashMap.put("lastupdate", lastUpdate ? LocalDateTime.now().toString() : post.getLastUpdate().toString());
         postloginHashMap.put("created", created ? LocalDateTime.now().toString() : post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
         postloginHashMap.put("html", post.getHtml());

@@ -11,7 +11,7 @@ public class PostBuilder {
     private String title;
     private String author;
     private LocalDateTime created;
-    private String lastUpdate;
+    private LocalDateTime lastUpdate;
     private String category;
     private String id;
     private String html;
@@ -46,7 +46,7 @@ public class PostBuilder {
         return this;
     }
 
-    public PostBuilder lastUpdate(String lastUpdate) {
+    public PostBuilder lastUpdate(LocalDateTime lastUpdate) {
         this.lastUpdate = lastUpdate;
         return this;
     }
