@@ -32,7 +32,7 @@ public class PostBuilder {
 
     public PostBuilder html(Html html) {
         layout.add(html);
-        this.html += html + "\r\n";
+        this.html += html.getInnerHtml() + " ";
         return this;
     }
 

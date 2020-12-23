@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class Post implements Comparable<Post> {
 
-    private final VerticalLayout layout;
+    private VerticalLayout layout;
     private final String title;
     private final String author;
     private final LocalDateTime created;
@@ -63,6 +63,11 @@ public class Post implements Comparable<Post> {
 
     public Post setHtml(String html) {
         this.html = html;
+        return this;
+    }
+
+    public Post setLayout(VerticalLayout layout) {
+        this.layout = layout;
         return this;
     }
 

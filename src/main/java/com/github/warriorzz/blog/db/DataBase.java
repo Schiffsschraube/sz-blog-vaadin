@@ -25,13 +25,14 @@ public class DataBase {
     private final MongoCollection<HashMap> categoryCollection;
 
     private DataBase() {
-        MongoClient client = MongoClients.create("mongodb://"
-                + Dotenv.configure().ignoreIfMissing().load().get("MONGO_USERNAME")
-                + ":" + Dotenv.configure().ignoreIfMissing().load().get("MONGO_PASSWORD")
-                + "@" + Dotenv.configure().ignoreIfMissing().load().get("MONGO_HOST")
-                + "/" + Dotenv.configure().ignoreIfMissing().load().get("MONGO_DATABASE")
+        Dotenv dotenv = Dotenv.load();
+        MongoClient client = MongoClients.create("mongodb+srv://"
+                + dotenv.get("MONGO_USERNAME")
+                + ":" + dotenv.get("MONGO_PASSWORD")
+                + "@" + dotenv.get("MONGO_HOST")
+                + "/" + dotenv.get("MONGO_DATABASE")
                 + "?retryWrites=true&w=majority");
-        MongoDatabase database = client.getDatabase(Dotenv.configure().ignoreIfMissing().load().get("MONGO_DATABASE"));
+        MongoDatabase database = client.getDatabase(dotenv.get("MONGO_DATABASE"));
         userCollection = database.getCollection("UserData", HashMap.class);
         postCollection = database.getCollection("PostData", HashMap.class);
         categoryCollection = database.getCollection("CategoryData", HashMap.class);
@@ -56,7 +57,7 @@ public class DataBase {
             PostBuilder builder = new PostBuilder();
             builder.category((String) postMap.get("category"));
             builder.author((String) postMap.get("author"));
-            builder.lastUpdate(LocalDateTime.parse((String) postMap.get("lastupdate")));
+            builder.lastUpdate(postMap.get("lastupdate") != null ? LocalDateTime.parse((String) postMap.get("lastupdate")) : null);
             builder.created(LocalDateTime.parse((String) postMap.get("created")));
             builder.title((String) postMap.get("title"));
             builder.id(postMap.get("_id").toString());
@@ -86,7 +87,7 @@ public class DataBase {
 
         postloginHashMap.put("title", post.getTitle());
         postloginHashMap.put("author", post.getAuthor());
-        postloginHashMap.put("lastupdate", post.getLastUpdate().toString());
+        postloginHashMap.put("lastupdate", post.getLastUpdate() == null? null : post.getLastUpdate().toString());
         postloginHashMap.put("created", post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
         postloginHashMap.put("html", html);
@@ -110,12 +111,11 @@ public class DataBase {
 
         postloginHashMap.put("title", post.getTitle());
         postloginHashMap.put("author", post.getAuthor());
-        postloginHashMap.put("lastupdate", lastUpdate ? LocalDateTime.now().toString() : post.getLastUpdate().toString());
+        postloginHashMap.put("lastupdate", lastUpdate ? LocalDateTime.now().toString() : post.getLastUpdate() == null ? null : post.getLastUpdate().toString());
         postloginHashMap.put("created", created ? LocalDateTime.now().toString() : post.getCreated().toString());
         postloginHashMap.put("category", post.getCategory());
         postloginHashMap.put("html", post.getHtml());
         postloginHashMap.put("confirmed", String.valueOf(post.isConfirmed()));
-        System.out.println(post.getID());
 
         postCollection.replaceOne(new Document("_id", new ObjectId(post.getID())), postloginHashMap);
     }

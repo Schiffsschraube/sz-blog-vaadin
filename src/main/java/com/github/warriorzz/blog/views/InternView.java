@@ -311,8 +311,29 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             dialog.open();
         });
 
+        Button editButton = new Button("Edit");
+
+        RichTextEditor editor = new RichTextEditor();
+        editor.setI18n(getEditorI18n());
+        editor.asHtml().setValue(post.getHtml());
+        editor.setVisible(false);
+        postLayout.add(editor);
+
+        editButton.addClickListener(event -> {
+            if(editor.isVisible()) {
+                DataBase.getInstance().updatePost(post.setHtml(editor.getHtmlValue()), false, false);
+                VerticalLayout newLayout = new VerticalLayout();
+                for(String html: editor.getHtmlValue().split("\r\n")) newLayout.add(new Html(html));
+                postLayout.replace(post.getLayout(), newLayout);
+                post.setLayout(newLayout);
+                editor.setVisible(false);
+            } else {
+                editor.setVisible(true);
+            }
+        });
+
         HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(accept, decline);
+        buttonLayout.add(accept, decline, editButton);
 
         postLayout.add(buttonLayout);
         accordion.add(post.getTitle() + " - von " + post.getAuthor(), postLayout);
