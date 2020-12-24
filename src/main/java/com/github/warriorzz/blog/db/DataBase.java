@@ -25,8 +25,8 @@ public class DataBase {
     private final MongoCollection<HashMap> categoryCollection;
 
     private DataBase() {
-        Dotenv dotenv = Dotenv.load();
-        MongoClient client = MongoClients.create("mongodb+srv://"
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        MongoClient client = MongoClients.create("mongodb://"
                 + dotenv.get("MONGO_USERNAME")
                 + ":" + dotenv.get("MONGO_PASSWORD")
                 + "@" + dotenv.get("MONGO_HOST")
