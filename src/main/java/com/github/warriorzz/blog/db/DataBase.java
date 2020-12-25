@@ -22,6 +22,7 @@ public class DataBase {
     private final MongoCollection<Document> userCollection;
     private final MongoCollection<Document> postCollection;
     private final MongoCollection<Document> categoryCollection;
+    private final MongoCollection<Document> deletedPostCollection;
 
     private DataBase() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
@@ -35,6 +36,7 @@ public class DataBase {
         userCollection = database.getCollection("UserData", Document.class);
         postCollection = database.getCollection("PostData", Document.class);
         categoryCollection = database.getCollection("CategoryData", Document.class);
+        deletedPostCollection = database.getCollection("DeletedPostCollection", Document.class);
     }
 
     public UserData getUser(UserData.UserLogin login) {
@@ -117,6 +119,22 @@ public class DataBase {
         document.put("confirmed", String.valueOf(post.isConfirmed()));
 
         postCollection.replaceOne(new Document("_id", new ObjectId(post.getID())), document);
+    }
+
+    public void deletePost(Post post) {
+        postCollection.deleteOne(new Document("id_", post.getID()));
+
+        Document document = new Document();
+
+        document.put("title", post.getTitle());
+        document.put("author", post.getAuthor());
+        document.put("lastupdate", post.getLastUpdate() == null? null : post.getLastUpdate().toString());
+        document.put("created", post.getCreated().toString());
+        document.put("category", post.getCategory());
+        document.put("html", post.getHtml());
+        document.put("confirmed", "false");
+
+        deletedPostCollection.insertOne(document);
     }
 
     private static DataBase instance;

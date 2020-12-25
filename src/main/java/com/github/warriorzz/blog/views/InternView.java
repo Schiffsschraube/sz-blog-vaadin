@@ -299,7 +299,9 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             Button confirm = new Button("Ja, der Post soll gelöscht werden.");
             confirm.addClickListener(clickEvent -> {
-
+                DataBase.getInstance().deletePost(post);
+                accordion.remove(postLayout);
+                dialog.close();
             });
             dialogLayout.add(confirm);
 
