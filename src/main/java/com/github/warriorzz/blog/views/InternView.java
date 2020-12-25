@@ -264,8 +264,8 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         postLayout.add(post.getLayout());
         if(post.getCreated() != null) postLayout.add(times);
 
-        Button accept = new Button("Accept");
-        accept.addClickListener(event -> {
+        Button acceptButton = new Button("Accept");
+        acceptButton.addClickListener(event -> {
             Dialog dialog = new Dialog();
             dialog.setCloseOnEsc(false);
             dialog.setDraggable(false);
@@ -273,7 +273,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             dialogLayout.add("Sind Sie sich sicher?");
 
             Button confirm = new Button("Ja, der Post soll erscheinen.");
-            confirm.addClickListener(event1 -> {
+            confirm.addClickListener(clickEvent -> {
                 DataBase.getInstance().updatePost(post.setConfirmed(true), true, false);
                 accordion.remove(postLayout);
                 dialog.close();
@@ -281,15 +281,15 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             dialogLayout.add(confirm);
 
             Button decline = new Button("Nein, soll er nicht.");
-            decline.addClickListener(event2 -> dialog.close());
+            decline.addClickListener(clickEvent -> dialog.close());
             dialogLayout.add(decline);
 
             dialog.add(dialogLayout);
             dialog.open();
         });
 
-        Button decline = new Button("Decline");
-        decline.addClickListener(event -> {
+        Button declineButton = new Button("Decline");
+        declineButton.addClickListener(event -> {
             Dialog dialog = new Dialog();
             dialog.setCloseOnEsc(false);
             dialog.setDraggable(false);
@@ -298,13 +298,13 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             dialogLayout.add("Sind Sie sich sicher?");
 
             Button confirm = new Button("Ja, der Post soll gelöscht werden.");
-            confirm.addClickListener(event1 -> {
+            confirm.addClickListener(clickEvent -> {
 
             });
             dialogLayout.add(confirm);
 
             Button decline1 = new Button("Nein, soll er nicht.");
-            decline1.addClickListener(event2 -> dialog.close());
+            decline1.addClickListener(clickEvent -> dialog.close());
             dialogLayout.add(decline1);
 
             dialog.add(dialogLayout);
@@ -313,27 +313,27 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         Button editButton = new Button("Edit");
 
-        RichTextEditor editor = new RichTextEditor();
-        editor.setI18n(getEditorI18n());
-        editor.asHtml().setValue(post.getHtml());
-        editor.setVisible(false);
-        postLayout.add(editor);
+        RichTextEditor editEditor = new RichTextEditor();
+        editEditor.setI18n(getEditorI18n());
+        editEditor.asHtml().setValue(post.getHtml());
+        editEditor.setVisible(false);
+        postLayout.add(editEditor);
 
         editButton.addClickListener(event -> {
-            if(editor.isVisible()) {
-                DataBase.getInstance().updatePost(post.setHtml(editor.getHtmlValue()), false, false);
+            if(editEditor.isVisible()) {
+                DataBase.getInstance().updatePost(post.setHtml(editEditor.getHtmlValue()), false, false);
                 VerticalLayout newLayout = new VerticalLayout();
-                for(String html: editor.getHtmlValue().split("\r\n")) newLayout.add(new Html(html));
+                for(String html: editEditor.getHtmlValue().split("\r\n")) newLayout.add(new Html(html));
                 postLayout.replace(post.getLayout(), newLayout);
                 post.setLayout(newLayout);
-                editor.setVisible(false);
+                editEditor.setVisible(false);
             } else {
-                editor.setVisible(true);
+                editEditor.setVisible(true);
             }
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(accept, decline, editButton);
+        buttonLayout.add(acceptButton, declineButton, editButton);
 
         postLayout.add(buttonLayout);
         accordion.add(post.getTitle() + " - von " + post.getAuthor(), postLayout);
