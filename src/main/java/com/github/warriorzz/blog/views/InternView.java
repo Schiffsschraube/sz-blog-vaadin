@@ -159,7 +159,16 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         previewButton.addClickListener(event -> {
             previewLayout.removeAll();
             for(String line: editor.getHtmlValue().split("\n")) {
-                previewLayout.add(new Html(line));
+                try {
+                    previewLayout.add(new Html(line));
+                }catch( Exception exception) {
+                    previewLayout.removeAll();
+                    Dialog error = new Dialog();
+                    error.setCloseOnEsc(true);
+                    error.add("Exception while displaying Content, value not valid");
+                    error.open();
+                    break;
+                }
             }
         });
 
@@ -176,7 +185,22 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
                 Notification.show("Bitte trage oben alles ein!");
                 return;
             }
-
+            try {
+                for(String line: editor.getHtmlValue().split("\n")){
+                    for(String line2: line.split("</p>")) {
+                        if(line2.startsWith("<p>"))
+                            new Html(line2 + "</p>");
+                        else
+                            new Html(line2);
+                    }
+                }
+            }catch(Exception e) {
+                Dialog error = new Dialog();
+                error.setCloseOnEsc(true);
+                error.add("Exception while displaying Content, value not valid");
+                error.open();
+                return;
+            }
             createFileFromEditor(editor.getHtmlValue(), authorField.isEmpty() ? "" : authorField.getValue(),
                     titleField.getValue(),
                     LocalDateTime.now(),
