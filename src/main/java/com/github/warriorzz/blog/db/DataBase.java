@@ -43,7 +43,7 @@ public class DataBase {
         Document userDocument = userCollection.find(new Document("username", GFG.sha512(login.getUsername()))).first();
         if(userDocument == null) return null;
         if(Objects.requireNonNull(userDocument).get("password").equals(GFG.sha512(login.getPassword())))
-            return new UserData(true, UserData.Role.fromString(String.valueOf(userDocument.get("role"))), userDocument.getString("_id"));
+            return new UserData(true, UserData.Role.fromString(String.valueOf(userDocument.get("role"))), userDocument.get("_id").toString());
         return null;
     }
 
@@ -138,6 +138,23 @@ public class DataBase {
         document.put("confirmed", "false");
 
         deletedPostCollection.insertOne(document);
+    }
+
+    public void insertCategory(String category) {
+        ArrayList<String> categories = getCategories();
+        categories.add(category);
+        categoryCollection.deleteOne(new Document("_id", Objects.requireNonNull(categoryCollection.find().first()).get("_id")));
+        Document document = new Document("0", categories.get(0));
+        int count = 0;
+        for(String categoryS: categories) {
+            if(count == 0) {
+                count++;
+                continue;
+            }
+            document.append(String.valueOf(count), categoryS);
+            count++;
+        }
+        categoryCollection.insertOne(document);
     }
 
     private static DataBase instance;

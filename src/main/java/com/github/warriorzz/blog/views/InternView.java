@@ -230,6 +230,41 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         //ADMIN TODO
         adminLayout.setWidth("50vw");
+        adminLayout.setVisible(false);
+
+        HorizontalLayout categoryLayout = new HorizontalLayout();
+        TextField categoryField = new TextField();
+        categoryField.setPlaceholder("Neue Kategorie");
+        categoryField.setWidth("200px");
+        categoryField.setLabel("Neue Kategorie hinzufügen");
+        categoryLayout.add(categoryField);
+
+        Button enterCategoryButton = new Button("Hinzufügen");
+        enterCategoryButton.addClickListener(event -> {
+            if(categoryField.getValue() == null) return;
+
+            Dialog confirmCategoryDialog = new Dialog();
+            VerticalLayout categoryDialogLayout = new VerticalLayout();
+            categoryDialogLayout.add("Kategorie " + categoryField.getValue() + " hinzufügen?");
+
+            Button acceptCategoryButton = new Button("Ja");
+            acceptCategoryButton.addClickListener(event1 -> {
+                DataBase.getInstance().insertCategory(categoryField.getValue());
+                categoryField.setValue("");
+                confirmCategoryDialog.close();
+            });
+            categoryDialogLayout.add(acceptCategoryButton);
+
+            Button declineCategoryButton = new Button("Nein");
+            declineCategoryButton.addClickListener(event1 -> dialog.close());
+            categoryDialogLayout.add(declineCategoryButton);
+
+            confirmCategoryDialog.add(categoryDialogLayout);
+            confirmCategoryDialog.open();
+        });
+        categoryLayout.add(enterCategoryButton);
+
+        adminLayout.add(categoryLayout);
 
         if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.ADMIN)
             contentGoesHere.add(confirmLayout, insertLayout, adminLayout);
