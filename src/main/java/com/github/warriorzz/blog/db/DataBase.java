@@ -57,7 +57,7 @@ public class DataBase {
         for(Document document: documents){
             PostBuilder builder = new PostBuilder();
             builder.category((String) document.get("category"));
-            builder.author((String) document.get("author"), document.getString("_id"));
+            builder.author((String) document.get("author"), document.get("authorId").toString());
             builder.lastUpdate(document.get("lastupdate") != null ? LocalDateTime.parse((String) document.get("lastupdate")) : null);
             builder.created(LocalDateTime.parse((String) document.get("created")));
             builder.title((String) document.get("title"));
@@ -88,6 +88,7 @@ public class DataBase {
 
         document.put("title", post.getTitle());
         document.put("author", post.getAuthor());
+        document.put("authorId", post.getAuthorID());
         document.put("lastupdate", post.getLastUpdate() == null? null : post.getLastUpdate().toString());
         document.put("created", post.getCreated().toString());
         document.put("category", post.getCategory());
@@ -112,6 +113,7 @@ public class DataBase {
 
         document.put("title", post.getTitle());
         document.put("author", post.getAuthor());
+        document.put("authorId", post.getAuthorID());
         document.put("lastupdate", lastUpdate ? LocalDateTime.now().toString() : post.getLastUpdate() == null ? null : post.getLastUpdate().toString());
         document.put("created", created ? LocalDateTime.now().toString() : post.getCreated().toString());
         document.put("category", post.getCategory());
@@ -128,6 +130,7 @@ public class DataBase {
 
         document.put("title", post.getTitle());
         document.put("author", post.getAuthor());
+        document.put("authorId", post.getAuthorID());
         document.put("lastupdate", post.getLastUpdate() == null? null : post.getLastUpdate().toString());
         document.put("created", post.getCreated().toString());
         document.put("category", post.getCategory());

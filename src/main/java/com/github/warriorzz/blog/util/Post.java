@@ -58,6 +58,8 @@ public class Post implements Comparable<Post> {
 
     public String getHtml() { return html; }
 
+    public String getAuthorID() { return authorID; }
+
     public Post setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
         return this;
