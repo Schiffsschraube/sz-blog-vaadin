@@ -57,7 +57,7 @@ public class DataBase {
         for(Document document: documents){
             PostBuilder builder = new PostBuilder();
             builder.category((String) document.get("category"));
-            builder.author((String) document.get("author"), document.get("authorId").toString());
+            builder.author((String) document.get("author"), document.get("authorId") == null ? "" : document.get("authorId").toString());
             builder.lastUpdate(document.get("lastupdate") != null ? LocalDateTime.parse((String) document.get("lastupdate")) : null);
             builder.created(LocalDateTime.parse((String) document.get("created")));
             builder.title((String) document.get("title"));
