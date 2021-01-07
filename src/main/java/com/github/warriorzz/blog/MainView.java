@@ -202,8 +202,8 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         if(DataBase.getInstance().getPosts() == null) {
-            DataBase.getInstance().insertPost(new PostBuilder().author("").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(),"<p> --- TEXT --- </p>");
-            DataBase.getInstance().insertPost(new PostBuilder().author("").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(),"<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
+            DataBase.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(),"<p> --- TEXT --- </p>");
+            DataBase.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(),"<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
         }
         if(!initialized){
             try {

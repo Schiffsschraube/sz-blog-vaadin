@@ -4,10 +4,12 @@ public class UserData {
 
     private boolean loggedIn;
     private Role role;
+    private String id;
 
-    public UserData(boolean loggedIn, Role role){
+    public UserData(boolean loggedIn, Role role, String id){
         this.loggedIn = loggedIn;
         this.role = role;
+        this.id = id;
     }
 
     public boolean isLoggedIn(){ return loggedIn; }
@@ -15,6 +17,7 @@ public class UserData {
 
     public void setLoggedIn(boolean loggedIn){ this.loggedIn = loggedIn; }
     public void setRole(Role role){ this.role = role; }
+    public String getId() { return id; }
 
     public enum Role {
         ADMIN, USER, UNASSIGNED;

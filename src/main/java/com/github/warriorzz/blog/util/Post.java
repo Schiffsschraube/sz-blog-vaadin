@@ -9,6 +9,7 @@ public class Post implements Comparable<Post> {
     private VerticalLayout layout;
     private final String title;
     private final String author;
+    private final String authorID;
     private final LocalDateTime created;
     private final LocalDateTime lastUpdate;
     private final String category;
@@ -16,7 +17,8 @@ public class Post implements Comparable<Post> {
     private String html;
     private boolean confirmed = false;
 
-    public Post(VerticalLayout layout, String title, String author, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html){
+    public Post(VerticalLayout layout, String title, String author, String authorID, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html){
+        this.authorID = authorID;
         this.category = category;
         this.layout = layout;
         this.title = title;

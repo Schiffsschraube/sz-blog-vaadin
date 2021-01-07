@@ -10,6 +10,7 @@ public class PostBuilder {
     VerticalLayout layout;
     private String title;
     private String author;
+    private String authorId;
     private LocalDateTime created;
     private LocalDateTime lastUpdate;
     private String category;
@@ -36,8 +37,9 @@ public class PostBuilder {
         return this;
     }
 
-    public PostBuilder author(String author) {
+    public PostBuilder author(String author, String id) {
         this.author = author;
+        this.authorId = id;
         return this;
     }
 
@@ -57,6 +59,6 @@ public class PostBuilder {
     }
 
     public Post build() {
-        return new Post(layout, title, author, created, lastUpdate, category, id, html);
+        return new Post(layout, title, author, authorId, created, lastUpdate, category, id, html);
     }
 }

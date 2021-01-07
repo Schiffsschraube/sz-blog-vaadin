@@ -43,7 +43,7 @@ public class DataBase {
         Document userDocument = userCollection.find(new Document("username", GFG.sha512(login.getUsername()))).first();
         if(userDocument == null) return null;
         if(Objects.requireNonNull(userDocument).get("password").equals(GFG.sha512(login.getPassword())))
-            return new UserData(true, UserData.Role.fromString(String.valueOf(userDocument.get("role"))));
+            return new UserData(true, UserData.Role.fromString(String.valueOf(userDocument.get("role"))), userDocument.getString("_id"));
         return null;
     }
 
@@ -57,7 +57,7 @@ public class DataBase {
         for(Document document: documents){
             PostBuilder builder = new PostBuilder();
             builder.category((String) document.get("category"));
-            builder.author((String) document.get("author"));
+            builder.author((String) document.get("author"), document.getString("_id"));
             builder.lastUpdate(document.get("lastupdate") != null ? LocalDateTime.parse((String) document.get("lastupdate")) : null);
             builder.created(LocalDateTime.parse((String) document.get("created")));
             builder.title((String) document.get("title"));
