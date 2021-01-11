@@ -1,6 +1,6 @@
 package com.github.warriorzz.blog.views;
 
-import com.github.warriorzz.blog.db.DataBase;
+import com.github.warriorzz.blog.db.Database;
 import com.github.warriorzz.blog.util.UserData;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -37,7 +37,7 @@ public class LogIn extends VerticalLayout implements BeforeLeaveObserver {
     }
 
     public void passCredentials(String username, String password) {
-        UserData data = DataBase.getInstance().getUser(new UserData.UserLogin(username, password));
+        UserData data = Database.getInstance().getUser(new UserData.UserLogin(username, password));
         if (data == null){
             overlay.setError(true);
             return;

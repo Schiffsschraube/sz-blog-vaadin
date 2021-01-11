@@ -1,6 +1,6 @@
 package com.github.warriorzz.blog.views;
 
-import com.github.warriorzz.blog.db.DataBase;
+import com.github.warriorzz.blog.db.Database;
 import com.github.warriorzz.blog.util.Post;
 import com.github.warriorzz.blog.util.PostBuilder;
 import com.github.warriorzz.blog.util.UserData;
@@ -43,11 +43,11 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
     private void refresh() {
         confirmLayout.removeAll();
-        if(DataBase.getInstance().getPosts() == null || DataBase.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).toArray().length == 0)
+        if(Database.getInstance().getPosts() == null || Database.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).toArray().length == 0)
             confirmLayout.add(new Span("Nothing in here. :)"));
         else {
             Accordion accordion = new Accordion();
-            DataBase.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).forEach(post -> addPostToConfirmLayout(post, accordion));
+            Database.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).forEach(post -> addPostToConfirmLayout(post, accordion));
             confirmLayout.add(accordion);
             accordion.close();
         }
@@ -141,7 +141,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         DateTimePicker createdPicker = new DateTimePicker();
         createdPicker.setLocale(Locale.GERMANY);
 
-        ListDataProvider<String> providerCategory = DataProvider.fromStream(DataBase.getInstance().getCategories().stream());
+        ListDataProvider<String> providerCategory = DataProvider.fromStream(Database.getInstance().getCategories().stream());
         ComboBox<String> checkboxCategory = new ComboBox<>();
         checkboxCategory.setDataProvider(providerCategory);
         checkboxCategory.setPlaceholder("Kategorie");
@@ -249,7 +249,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             Button acceptCategoryButton = new Button("Ja");
             acceptCategoryButton.addClickListener(event1 -> {
-                DataBase.getInstance().insertCategory(categoryField.getValue());
+                Database.getInstance().insertCategory(categoryField.getValue());
                 categoryField.setValue("");
                 confirmCategoryDialog.close();
             });
@@ -283,7 +283,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         builder.lastUpdate(lastUpdate);
         builder.category(category);
 
-        DataBase.getInstance().insertPost(builder.build(), htmlContent);
+        Database.getInstance().insertPost(builder.build(), htmlContent);
     }
 
     @Override
@@ -333,7 +333,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             Button confirm = new Button("Ja, der Post soll erscheinen.");
             confirm.addClickListener(clickEvent -> {
-                DataBase.getInstance().updatePost(post.setConfirmed(true), true, false);
+                Database.getInstance().updatePost(post.setConfirmed(true), true, false);
                 accordion.remove(postLayout);
                 dialog.close();
             });
@@ -358,7 +358,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
             Button confirm = new Button("Ja, der Post soll gelöscht werden.");
             confirm.addClickListener(clickEvent -> {
-                DataBase.getInstance().deletePost(post);
+                Database.getInstance().deletePost(post);
                 accordion.remove(postLayout);
                 dialog.close();
             });
@@ -382,7 +382,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         editButton.addClickListener(event -> {
             if(editEditor.isVisible()) {
-                DataBase.getInstance().updatePost(post.setHtml(editEditor.getHtmlValue()), false, false);
+                Database.getInstance().updatePost(post.setHtml(editEditor.getHtmlValue()), false, false);
                 VerticalLayout newLayout = new VerticalLayout();
                 for(String html: editEditor.getHtmlValue().split("\r\n")) newLayout.add(new Html(html));
                 postLayout.replace(post.getLayout(), newLayout);

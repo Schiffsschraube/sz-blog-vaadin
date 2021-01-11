@@ -1,6 +1,6 @@
 package com.github.warriorzz.blog;
 
-import com.github.warriorzz.blog.db.DataBase;
+import com.github.warriorzz.blog.db.Database;
 import com.github.warriorzz.blog.util.Post;
 import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -56,11 +56,11 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         tabsList.clear();
         layoutMap.clear();
 
-        for(String category: DataBase.getInstance().getCategories()) addCategory(category);
+        for(String category: Database.getInstance().getCategories()) addCategory(category);
 
         // TODO: Tabs sortieren
-        if(DataBase.getInstance().getPosts() == null) return;
-        for(Post post: DataBase.getInstance().getPosts().stream().sorted().collect(Collectors.toList())) {
+        if(Database.getInstance().getPosts() == null) return;
+        for(Post post: Database.getInstance().getPosts().stream().sorted().collect(Collectors.toList())) {
             if(!post.isConfirmed()) continue;
             for(String tabs: tabsList.keySet()) {
                 if(tabs.equals(post.getCategory())) {
@@ -183,14 +183,14 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     }
 
     private void setCurrentPostToStartArticle(){
-        if(DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))))
-            currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))).findFirst().get();
+        if(Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))))
+            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))).findFirst().get();
         refreshPost();
     }
 
     private void setCurrentPostToImpressum() {
-        if(DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))))
-            currentPost = DataBase.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))).findFirst().get();
+        if(Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))))
+            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))).findFirst().get();
         refreshPost();
     }
 
@@ -201,9 +201,9 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
-        if(DataBase.getInstance().getPosts() == null) {
-            DataBase.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(),"<p> --- TEXT --- </p>");
-            DataBase.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(),"<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
+        if(Database.getInstance().getPosts() == null) {
+            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(),"<p> --- TEXT --- </p>");
+            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(),"<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
         }
         if(!initialized){
             try {

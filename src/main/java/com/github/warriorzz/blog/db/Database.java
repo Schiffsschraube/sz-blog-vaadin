@@ -17,14 +17,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class DataBase {
+public class Database {
 
     private final MongoCollection<Document> userCollection;
     private final MongoCollection<Document> postCollection;
     private final MongoCollection<Document> categoryCollection;
     private final MongoCollection<Document> deletedPostCollection;
 
-    private DataBase() {
+    private Database() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         MongoClient client = MongoClients.create("mongodb://"
                 + dotenv.get("MONGO_USERNAME")
@@ -157,9 +157,9 @@ public class DataBase {
         categoryCollection.insertOne(document);
     }
 
-    private static DataBase instance;
-    public static DataBase getInstance(){
-        if(instance == null) instance = new DataBase();
+    private static Database instance;
+    public static Database getInstance(){
+        if(instance == null) instance = new Database();
         return instance;
     }
 }
