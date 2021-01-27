@@ -13,91 +13,103 @@
 }*/
 
 h1 {
-  flex-grow: 1;
-  font-style: italic;
-  padding: 10px 0 0 30px;
-  margin: 0 0 0 0;
+    flex-grow: 1;
+    font-style: italic;
+    padding: 10px 0 0 30px;
+    margin: 0 0 0 0;
 }
 
 vaadin-tab {
-  font-size: var(--lumo-font-size-s);
-  height: var(--lumo-size-l);
-  font-weight: 600;
-  color: var(--lumo-body-text-color);
+    font-size: var(--lumo-font-size-s);
+    height: var(--lumo-size-l);
+    font-weight: 600;
+    color: var(--lumo-body-text-color);
 }
 
 vaadin-tab[selected] {
-  color: var(--lumo-primary-text-color);
+    color: var(--lumo-primary-text-color);
 }
 
 #sidebar-layout {
-  margin: 0 0 0 0;
-  padding: 10px 0 0 30px;
+    margin: 0 0 0 0;
+    padding: 10px 0 0 30px;
 }
 
 #accordion {
-  margin: 0 0 0 0;
-  padding: 0 0 0 0;
-  max-width: 25vw;
-  min-width: 10vw;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    max-width: 25vw;
+    min-width: 10vw;
 }
 
 #author-text {
-  font-size: 20px;
-  font-style: italic;
+    font-size: 20px;
+    font-style: italic;
 }
 
 #post-heading {
-  flex-grow: 1;
-  margin-top: 0;
-  margin-bottom: 1.0em;
+    flex-grow: 1;
+    margin-top: 0;
+    margin-bottom: 1.0em;
 }
 
 #post-author {
-  flex-grow: 3;
-  min-width: min-content;
-  align-content: baseline;
-  position: relative;
-  bottom: 0;
-  padding: 9px 0 0 0;
+    flex-grow: 3;
+    min-width: min-content;
+    align-content: baseline;
+    position: relative;
+    bottom: 0;
+    padding: 9px 0 0 0;
 }
 
 #no-margin-padding {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #post-layout {
-  margin: 10px 10px 10px 10px;
-  padding: 0;
-  min-width: 75vw;
-  max-width: 75vw;
+    margin: 10px 10px 10px 10px;
+    padding: 0;
+    min-width: 75vw;
+    max-width: 75vw;
 }
 
 #post-title {
-  margin: 10px 10px 10px 10px;
-  padding: 0;
+    margin: 10px 10px 10px 10px;
+    padding: 0;
 }
 
 #layout {
-  min-width: 100%;
+    min-width: 100%;
 }
 
 #post-times {
-  font-style: italic;
-  font-size: 15px;
+    font-style: italic;
+    font-size: 15px;
 }
 
 #logo {
-  flex-grow: 1;
-}
-
-#headbar {
-  min-width: 99vw;
+    flex-grow: 1;
+    min-width: 12.5vw;
+    max-width: 12.5vw;
+    max-height: 12.5vw;
+    min-height: 12.5vw;
+    padding-left: 0;
+    margin-left: 10vw;
+    padding-right: 0;
+    margin-right: 0;
+    margin-top: 1vh;
 }
 
 #heading-name {
-  flex-grow: 3;
-  min-width: 73vw;
-  font-size: 70px;
+    flex-grow: 4;
+    max-height: 7.77vw;
+    min-height: 7.77vw;
+    padding-right: 0;
+    margin-right: 0;
+}
+
+#layout-content {
+    min-width: 75vw;
+    max-width: 75vw;
 }

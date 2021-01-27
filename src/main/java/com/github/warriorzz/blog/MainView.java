@@ -9,20 +9,28 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.HasDynamicTitle;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.StreamResource;
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -56,29 +64,38 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         tabsList.clear();
         layoutMap.clear();
 
-        for(String category: Database.getInstance().getCategories()) addCategory(category);
+        for (String category : Database.getInstance().getCategories()) addCategory(category);
 
-        // TODO: Tabs sortieren
-        if(Database.getInstance().getPosts() == null) return;
-        for(Post post: Database.getInstance().getPosts().stream().sorted().collect(Collectors.toList())) {
-            if(!post.isConfirmed()) continue;
-            for(String tabs: tabsList.keySet()) {
-                if(tabs.equals(post.getCategory())) {
+        if (Database.getInstance().getPosts() == null) return;
+        List<Post> posts = Database.getInstance().getPosts().stream().sorted().collect(Collectors.toList());
+        for (Post post : posts) {
+            if (!post.isConfirmed()) continue;
+            for (String tabs : tabsList.keySet()) {
+                if (tabs.equals(post.getCategory())) {
                     Tab tab = new Tab(post.getTitle());
                     layoutMap.get(tabsList.get(post.getCategory())).put(tab, post);
                     tabsList.get(post.getCategory()).add(tab);
                 }
             }
         }
-
-        for(Tabs tabs: tabsList.values()) {
-            tabs.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
-                if(event.getSelectedTab() == null) return;
-                if(layoutMap.get(tabs).containsKey(event.getSelectedTab()))
+        layoutMap.put(tabsList.get("Blog"), new HashMap<>());
+        tabsList.get("Blog").removeAll();
+        for (Post post : posts) {
+            if (!post.isConfirmed()) continue;
+            if (post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME")) || post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME")))
+                continue;
+            Tab tabForBlog = new Tab(post.getTitle());
+            layoutMap.get(tabsList.get("Blog")).put(tabForBlog, post);
+            tabsList.get("Blog").add(tabForBlog);
+        }
+        for (Tabs tabs : tabsList.values()) {
+            tabs.addSelectedChangeListener(event -> {
+                if (event.getSelectedTab() == null) return;
+                if (layoutMap.get(tabs).containsKey(event.getSelectedTab()))
                     currentPost = layoutMap.get(tabs).get(event.getSelectedTab());
                 refreshPost();
-                for(Tabs tabs2: tabsList.values()){
-                    if(tabs != tabs2){
+                for (Tabs tabs2 : tabsList.values()) {
+                    if (tabs != tabs2) {
                         tabs2.setSelectedTab(null);
                     }
                 }
@@ -90,19 +107,18 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     private void initialize() throws IOException {
         setId("layout");
 
-        //HeadBar
-        HorizontalLayout headBar = new HorizontalLayout();
-        headBar.setId("headbar");
+        HorizontalLayout mainlayout = new HorizontalLayout();
+        mainlayout.setId("no-margin-padding");
 
-        H1 heading = new H1("schiffsschraube-Blog");
-        heading.setId("heading-name");
-        headBar.add(heading);
+        byte[] imageBytesHeading = Objects.requireNonNull(this.getClass().getClassLoader().getResource("sz_schrift.jpeg")).openStream().readAllBytes();
+        StreamResource resourceHeading = new StreamResource("LOGO.png", () -> new ByteArrayInputStream(imageBytesHeading));
+        Image imageHeading = new Image(resourceHeading, "Schriftzug");
+        imageHeading.setId("heading-name");
 
-        byte[] imageBytes = Objects.requireNonNull(this.getClass().getClassLoader().getResource("Logo_rot.png")).openStream().readAllBytes();
-        StreamResource resource = new StreamResource("Logo_rot.jpg", () -> new ByteArrayInputStream(imageBytes));
+        byte[] imageBytes = Objects.requireNonNull(this.getClass().getClassLoader().getResource("LOGO.png")).openStream().readAllBytes();
+        StreamResource resource = new StreamResource("LOGO.png", () -> new ByteArrayInputStream(imageBytes));
         Image image = new Image(resource, "logo");
         image.setId("logo");
-        headBar.add(image);
 
         // Content
         HorizontalLayout content = new HorizontalLayout();
@@ -130,17 +146,17 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         impressumEtc.add(intern);
 
         impressumEtc.addSelectedChangeListener((ComponentEventListener<Tabs.SelectedChangeEvent>) event -> {
-            if(event.getSelectedTab() == null)
+            if (event.getSelectedTab() == null)
                 return;
-            if(event.getSelectedTab().equals(startArticle)){
+            if (event.getSelectedTab().equals(startArticle)) {
                 setCurrentPostToStartArticle();
             }
-            if(event.getSelectedTab().equals(impressum)){
+            if (event.getSelectedTab().equals(impressum)) {
                 setCurrentPostToImpressum();
             }
-            if(event.getSelectedTab().equals(intern)) UI.getCurrent().navigate("intern");
-            for(Tabs tabs2: tabsList.values()){
-                if(impressumEtc != tabs2){
+            if (event.getSelectedTab().equals(intern)) UI.getCurrent().navigate("intern");
+            for (Tabs tabs2 : tabsList.values()) {
+                if (impressumEtc != tabs2) {
                     tabs2.setSelectedTab(null);
                 }
             }
@@ -149,12 +165,18 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
         content.add(accordionLayout);
         content.add(contentGoesHere);
-        add(headBar);
-        add(content);
+
+        VerticalLayout layoutContent2 = new VerticalLayout();
+        layoutContent2.add(imageHeading);
+        layoutContent2.add(content);
+        layoutContent2.setId("layout-content");
+        mainlayout.add(layoutContent2);
+        mainlayout.add(image);
+        add(mainlayout);
     }
 
     private void refreshPost() {
-        if(currentPost == null)
+        if (currentPost == null)
             return;
         contentGoesHere.removeAll();
 
@@ -164,13 +186,14 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         text.setId("post-author");
         HorizontalLayout titleAndAuthor = new HorizontalLayout();
         titleAndAuthor.add(heading);
-        if(!currentPost.getAuthor().equals("")) titleAndAuthor.add(text);
+        if (!currentPost.getAuthor().equals("")) titleAndAuthor.add(text);
 
-        Paragraph times = new Paragraph(currentPost.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) + " Uhr" + ((currentPost.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + currentPost.getLastUpdate()) : ""));
+        Paragraph times = new Paragraph(currentPost.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) +
+                " Uhr" + ((currentPost.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + currentPost.getLastUpdate()) : ""));
         times.setId("post-times");
         contentGoesHere.add(titleAndAuthor);
         contentGoesHere.add(currentPost.getLayout());
-        if(currentPost.getCreated() != null) contentGoesHere.add(times);
+        if (currentPost.getCreated() != null) contentGoesHere.add(times);
     }
 
     private void addCategory(String name) {
@@ -182,14 +205,14 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         layoutMap.put(tabs, new HashMap<>());
     }
 
-    private void setCurrentPostToStartArticle(){
-        if(Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))))
+    private void setCurrentPostToStartArticle() {
+        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))))
             currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))).findFirst().get();
         refreshPost();
     }
 
     private void setCurrentPostToImpressum() {
-        if(Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))))
+        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))))
             currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))).findFirst().get();
         refreshPost();
     }
@@ -201,11 +224,11 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
-        if(Database.getInstance().getPosts() == null) {
-            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(),"<p> --- TEXT --- </p>");
-            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(),"<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
+        if (Database.getInstance().getPosts() == null) {
+            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(), "<p> --- TEXT --- </p>");
+            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(), "<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
         }
-        if(!initialized){
+        if (!initialized) {
             try {
                 initialize();
             } catch (IOException e) {
