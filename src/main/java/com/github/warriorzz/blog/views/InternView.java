@@ -57,18 +57,20 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
     private void initialize() throws IOException {
         setId("layout");
 
-        HorizontalLayout headBar = new HorizontalLayout();
-        headBar.setId("headbar");
+        HorizontalLayout mainLayout = new HorizontalLayout();
+        mainLayout.setId("no-margin-padding");
 
-        H1 heading = new H1("schiffsschraube - Intern");
-        heading.setId("heading-name");
-        headBar.add(heading);
+        VerticalLayout contentLayout = new VerticalLayout();
 
-        byte[] imageBytes = Objects.requireNonNull(this.getClass().getClassLoader().getResource("Logo_rot.png")).openStream().readAllBytes();
+        byte[] imageBytes = Objects.requireNonNull(this.getClass().getClassLoader().getResource("LOGO.png")).openStream().readAllBytes();
         StreamResource resource = new StreamResource("Logo_rot.jpg", () -> new ByteArrayInputStream(imageBytes));
         Image image = new Image(resource, "logo");
         image.setId("logo");
-        headBar.add(image);
+
+        byte[] imageBytesSchrift = Objects.requireNonNull(this.getClass().getClassLoader().getResource("sz_schrift.jpeg")).openStream().readAllBytes();
+        StreamResource resourceSchrift = new StreamResource("Logo_rot.jpg", () -> new ByteArrayInputStream(imageBytesSchrift));
+        Image imageSchrift = new Image(resourceSchrift, "logo");
+        imageSchrift.setId("logo");
 
         // Content
         HorizontalLayout content = new HorizontalLayout();
@@ -271,8 +273,12 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         else if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.USER)
             contentGoesHere.add(insertLayout);
         content.add(contentGoesHere);
-        add(headBar);
-        add(content);
+
+        contentLayout.add(imageSchrift);
+        contentLayout.add(content);
+        mainLayout.add(contentLayout);
+        mainLayout.add(image);
+        add(mainLayout);
     }
 
     private void createFileFromEditor(String htmlContent, String author, String title, LocalDateTime created, LocalDateTime lastUpdate, String category){
