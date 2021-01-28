@@ -61,16 +61,17 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         mainLayout.setId("no-margin-padding");
 
         VerticalLayout contentLayout = new VerticalLayout();
+        contentLayout.setId("layout-content");
 
         byte[] imageBytes = Objects.requireNonNull(this.getClass().getClassLoader().getResource("LOGO.png")).openStream().readAllBytes();
-        StreamResource resource = new StreamResource("Logo_rot.jpg", () -> new ByteArrayInputStream(imageBytes));
+        StreamResource resource = new StreamResource("LOGO.png", () -> new ByteArrayInputStream(imageBytes));
         Image image = new Image(resource, "logo");
         image.setId("logo");
 
         byte[] imageBytesSchrift = Objects.requireNonNull(this.getClass().getClassLoader().getResource("sz_schrift.jpeg")).openStream().readAllBytes();
-        StreamResource resourceSchrift = new StreamResource("Logo_rot.jpg", () -> new ByteArrayInputStream(imageBytesSchrift));
-        Image imageSchrift = new Image(resourceSchrift, "logo");
-        imageSchrift.setId("logo");
+        StreamResource resourceSchrift = new StreamResource("sz_schrift.jpeg", () -> new ByteArrayInputStream(imageBytesSchrift));
+        Image imageSchrift = new Image(resourceSchrift, "heading-name");
+        imageSchrift.setId("heading-name");
 
         // Content
         HorizontalLayout content = new HorizontalLayout();
