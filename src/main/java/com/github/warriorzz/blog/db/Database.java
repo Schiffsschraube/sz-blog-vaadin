@@ -1,15 +1,11 @@
 package com.github.warriorzz.blog.db;
 
-import com.github.warriorzz.blog.util.GFG;
-import com.github.warriorzz.blog.util.Post;
-import com.github.warriorzz.blog.util.PostBuilder;
-import com.github.warriorzz.blog.util.UserData;
+import com.github.warriorzz.blog.util.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vaadin.flow.component.Html;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -25,14 +21,13 @@ public class Database {
     private final MongoCollection<Document> deletedPostCollection;
 
     private Database() {
-        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         MongoClient client = MongoClients.create("mongodb://"
-                + dotenv.get("MONGO_USERNAME")
-                + ":" + dotenv.get("MONGO_PASSWORD")
-                + "@" + dotenv.get("MONGO_HOST")
-                + "/" + dotenv.get("MONGO_DATABASE")
+                + Config.MONGO_USERNAME
+                + ":" + Config.MONGO_PASSWORD
+                + "@" + Config.MONGO_HOST
+                + "/" + Config.MONGO_DATABASE
                 + "?retryWrites=true&w=majority");
-        MongoDatabase database = client.getDatabase(dotenv.get("MONGO_DATABASE"));
+        MongoDatabase database = client.getDatabase(Config.MONGO_DATABASE);
         userCollection = database.getCollection("UserData", Document.class);
         postCollection = database.getCollection("PostData", Document.class);
         categoryCollection = database.getCollection("CategoryData", Document.class);

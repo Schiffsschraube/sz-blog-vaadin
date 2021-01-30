@@ -1,10 +1,9 @@
 package com.github.warriorzz.blog;
 
 import com.github.warriorzz.blog.db.Database;
+import com.github.warriorzz.blog.util.Config;
 import com.github.warriorzz.blog.util.Post;
-import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -23,11 +22,9 @@ import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.StreamResource;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +79,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         tabsList.get("Blog").removeAll();
         for (Post post : posts) {
             if (!post.isConfirmed()) continue;
-            if (post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME")) || post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME")))
+            if (post.getTitle().equals(Config.START_ARTICLE_NAME) || post.getTitle().equals(Config.IMPRESSUM_NAME))
                 continue;
             Tab tabForBlog = new Tab(post.getTitle());
             layoutMap.get(tabsList.get("Blog")).put(tabForBlog, post);
@@ -206,14 +203,14 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     }
 
     private void setCurrentPostToStartArticle() {
-        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))))
-            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("START_ARTICLE_NAME"))).findFirst().get();
+        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Config.START_ARTICLE_NAME)))
+            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Config.START_ARTICLE_NAME)).findFirst().get();
         refreshPost();
     }
 
     private void setCurrentPostToImpressum() {
-        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))))
-            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Dotenv.configure().ignoreIfMissing().load().get("IMPRESSUM_NAME"))).findFirst().get();
+        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Config.IMPRESSUM_NAME)))
+            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Config.IMPRESSUM_NAME)).findFirst().get();
         refreshPost();
     }
 
@@ -224,10 +221,6 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
-        if (Database.getInstance().getPosts() == null) {
-            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p> --- TEXT --- </p>")).title("Impressum").build(), "<p> --- TEXT --- </p>");
-            Database.getInstance().insertPost(new PostBuilder().author("", "").category("").created(LocalDateTime.now()).html(new Html("<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>")).title("Impressum").build(), "<p>Das ist unser neuer Blog! Bei Fragen, Kritik und Anforderungen, meldet euch gerne unter schiffsschraube@whgw.de!</p>");
-        }
         if (!initialized) {
             try {
                 initialize();
