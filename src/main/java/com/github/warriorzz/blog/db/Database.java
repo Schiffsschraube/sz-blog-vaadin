@@ -57,6 +57,7 @@ public class Database {
             builder.created(LocalDateTime.parse((String) document.get("created")));
             builder.title((String) document.get("title"));
             builder.id(document.get("_id").toString());
+            builder.clickCounter(document.getInteger("clicks") == null? 0 : document.getInteger("clicks"));
             for(String line: ((String) document.get("html")).split("\n")){
                 for(String line2: line.split("</p>")) {
                     if(line2.startsWith("<p>"))
@@ -89,6 +90,7 @@ public class Database {
         document.put("category", post.getCategory());
         document.put("html", html);
         document.put("confirmed", "false");
+        document.put("clicks", post.getClickCounter());
 
         postCollection.insertOne(document);
     }
@@ -114,6 +116,7 @@ public class Database {
         document.put("category", post.getCategory());
         document.put("html", post.getHtml());
         document.put("confirmed", String.valueOf(post.isConfirmed()));
+        document.put("clicks", post.getClickCounter());
 
         postCollection.replaceOne(new Document("_id", new ObjectId(post.getID())), document);
     }
@@ -131,6 +134,7 @@ public class Database {
         document.put("category", post.getCategory());
         document.put("html", post.getHtml());
         document.put("confirmed", "false");
+        document.put("clicks", post.getClickCounter());
 
         deletedPostCollection.insertOne(document);
     }
