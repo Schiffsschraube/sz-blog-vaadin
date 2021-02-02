@@ -1,6 +1,7 @@
 package com.github.warriorzz.blog;
 
 import com.github.warriorzz.blog.db.Database;
+import com.github.warriorzz.blog.util.ArticleClick;
 import com.github.warriorzz.blog.util.Config;
 import com.github.warriorzz.blog.util.Post;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -16,10 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.StreamResource;
 
@@ -38,7 +36,7 @@ import java.util.stream.Collectors;
 @JsModule("./styles/shared-styles.js")
 @CssImport("./styles/views/main/main-view.css")
 @PWA(name = "sz-blog-vaadin", shortName = "Schiffsschraube", enableInstallPrompt = false)
-public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver {
+public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver, BeforeLeaveObserver {
 
     private boolean initialized = false;
     private Post currentPost = null;
@@ -49,6 +47,8 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
 
     private final HashMap<String, Tabs> tabsList = new HashMap<>();
     private final HashMap<Tabs, HashMap<Tab, Post>> layoutMap = new HashMap<>();
+
+    private final HashMap<String, ArticleClick> clicks = new HashMap<>();
 
     public MainView() {
 
@@ -91,6 +91,12 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
                 if (layoutMap.get(tabs).containsKey(event.getSelectedTab()))
                     currentPost = layoutMap.get(tabs).get(event.getSelectedTab());
                 refreshPost();
+                if (clicks.get(UI.getCurrent().getSession().getPushId()) != null) {
+                    if (clicks.get(UI.getCurrent().getSession().getPushId()).checkTimeStamp(30 * 1000)) {
+                        clicks.get(UI.getCurrent().getSession().getPushId()).addClick();
+                    }
+                }
+                clicks.put(UI.getCurrent().getSession().getPushId(), new ArticleClick(currentPost));
                 for (Tabs tabs2 : tabsList.values()) {
                     if (tabs != tabs2) {
                         tabs2.setSelectedTab(null);
@@ -230,5 +236,20 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             initialized = true;
         }
         refresh();
+        for(String pushId: clicks.keySet()) {
+            if(clicks.get(pushId).checkTimeStamp(30 * 1000)) {
+                clicks.get(pushId).addClick();
+            }
+        }
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
+        if (clicks.get(UI.getCurrent().getSession().getPushId()) != null) {
+            if (clicks.get(UI.getCurrent().getSession().getPushId()).checkTimeStamp(30 * 1000)) {
+                clicks.get(UI.getCurrent().getSession().getPushId()).addClick();
+            }
+        }
+
     }
 }
