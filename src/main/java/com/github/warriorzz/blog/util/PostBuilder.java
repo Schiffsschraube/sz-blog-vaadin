@@ -16,7 +16,7 @@ public class PostBuilder {
     private String category;
     private String id;
     private String html;
-    private int clickCounter = 0;
+    private double clickCounter = 0;
 
     public PostBuilder() {
         layout = new VerticalLayout();
@@ -59,7 +59,7 @@ public class PostBuilder {
         return this;
     }
 
-    public PostBuilder clickCounter(int clicks) {
+    public PostBuilder clickCounter(double clicks) {
         this.clickCounter = clicks;
         return this;
     }

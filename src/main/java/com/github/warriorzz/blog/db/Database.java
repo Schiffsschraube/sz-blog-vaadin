@@ -57,7 +57,7 @@ public class Database {
             builder.created(LocalDateTime.parse((String) document.get("created")));
             builder.title((String) document.get("title"));
             builder.id(document.get("_id").toString());
-            builder.clickCounter(document.getInteger("clicks") == null? 0 : document.getInteger("clicks"));
+            builder.clickCounter(document.get("clicks") == null? 0 : Double.parseDouble(document.get("clicks").toString()));
             for(String line: ((String) document.get("html")).split("\n")){
                 for(String line2: line.split("</p>")) {
                     if(line2.startsWith("<p>"))

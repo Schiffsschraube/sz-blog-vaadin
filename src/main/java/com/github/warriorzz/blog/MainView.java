@@ -4,6 +4,7 @@ import com.github.warriorzz.blog.db.Database;
 import com.github.warriorzz.blog.util.ArticleClick;
 import com.github.warriorzz.blog.util.Config;
 import com.github.warriorzz.blog.util.Post;
+import com.github.warriorzz.blog.util.PostBuilder;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
@@ -23,6 +24,7 @@ import com.vaadin.flow.server.StreamResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +71,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             if (!post.isConfirmed()) continue;
             for (String tabs : tabsList.keySet()) {
                 if (tabs.equals(post.getCategory())) {
-                    Tab tab = new Tab(post.getTitle());
+                    Tab tab = new Tab(post.getTitle().length() < 40 ? post.getTitle() : post.getTitle().substring(0, 38) + "...");
                     layoutMap.get(tabsList.get(post.getCategory())).put(tab, post);
                     tabsList.get(post.getCategory()).add(tab);
                 }
@@ -81,7 +83,7 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             if (!post.isConfirmed()) continue;
             if (post.getTitle().equals(Config.START_ARTICLE_NAME) || post.getTitle().equals(Config.IMPRESSUM_NAME))
                 continue;
-            Tab tabForBlog = new Tab(post.getTitle());
+            Tab tabForBlog = new Tab(post.getTitle().length() < 40 ? post.getTitle() : post.getTitle().substring(0, 38) + "...");
             layoutMap.get(tabsList.get("Blog")).put(tabForBlog, post);
             tabsList.get("Blog").add(tabForBlog);
         }

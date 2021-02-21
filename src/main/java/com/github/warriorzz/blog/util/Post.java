@@ -14,11 +14,11 @@ public class Post implements Comparable<Post> {
     private final LocalDateTime lastUpdate;
     private final String category;
     private final String id;
-    private int clickCounter;
+    private double clickCounter;
     private String html;
     private boolean confirmed = false;
 
-    public Post(VerticalLayout layout, String title, String author, String authorID, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html, int clickCounter){
+    public Post(VerticalLayout layout, String title, String author, String authorID, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html, double clickCounter){
         this.authorID = authorID;
         this.category = category;
         this.layout = layout;
@@ -62,7 +62,7 @@ public class Post implements Comparable<Post> {
 
     public String getAuthorID() { return authorID; }
 
-    public int getClickCounter() { return clickCounter; }
+    public double getClickCounter() { return clickCounter; }
 
     public Post setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
