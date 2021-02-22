@@ -122,7 +122,7 @@ public class Database {
     }
 
     public void deletePost(Post post) {
-        postCollection.deleteOne(new Document("id_", post.getID()));
+        postCollection.deleteOne(new Document("_id", new ObjectId(post.getID())));
 
         Document document = new Document();
 
