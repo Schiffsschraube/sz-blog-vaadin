@@ -17,6 +17,7 @@ public class PostBuilder {
     private String id;
     private String html;
     private double clickCounter = 0;
+    private boolean autoConfirm = false;
 
     public PostBuilder() {
         layout = new VerticalLayout();
@@ -64,7 +65,17 @@ public class PostBuilder {
         return this;
     }
 
+    public PostBuilder setHtml(String html) {
+        this.html = html;
+        return this;
+    }
+
+    public PostBuilder autoConfirm() {
+        autoConfirm = true;
+        return this;
+    }
+
     public Post build() {
-        return new Post(layout, title, author, authorId, created, lastUpdate, category, id, html, clickCounter);
+        return new Post(layout, title, author, authorId, created, lastUpdate, category, id, html, clickCounter, autoConfirm);
     }
 }

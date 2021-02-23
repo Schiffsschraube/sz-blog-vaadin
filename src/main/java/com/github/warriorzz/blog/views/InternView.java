@@ -350,7 +350,8 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         titleAndAuthor.add(heading);
         if(post.getAuthor() != null) titleAndAuthor.add(text);
 
-        Paragraph times = new Paragraph(post.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) + " Uhr" + ((post.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + post.getLastUpdate()) : ""));
+        Paragraph times = new Paragraph(post.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) + " Uhr" + ((post.getLastUpdate() != null) ?
+                (", zuletzt bearbeitet: " + post.getLastUpdate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm"))) : ""));
         times.setId("post-times");
         postLayout.add(titleAndAuthor);
         postLayout.add(post.getLayout());
@@ -411,7 +412,23 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         editEditor.setI18n(getEditorI18n());
         editEditor.asHtml().setValue(post.getHtml());
         editEditor.setVisible(false);
-        postLayout.add(editEditor);
+
+        HorizontalLayout editButtonLayout = new HorizontalLayout();
+        editButtonLayout.setVisible(false);
+        TextField authorField = new TextField();
+        authorField.setPlaceholder("Autor");
+
+        TextField titleField = new TextField();
+        titleField.setPlaceholder("Titel");
+
+        ListDataProvider<String> providerCategory = DataProvider.fromStream(Database.getInstance().getCategories().stream());
+        ComboBox<String> checkboxCategory = new ComboBox<>();
+        checkboxCategory.setDataProvider(providerCategory);
+        checkboxCategory.setValue(post.getCategory());
+        checkboxCategory.setPlaceholder("Kategorie");
+
+        editButtonLayout.add(titleField, authorField, checkboxCategory);
+        postLayout.add(editButtonLayout, editEditor);
 
         editButton.addClickListener(event -> {
             if(editEditor.isVisible()) {
@@ -421,8 +438,14 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
                 post.setLayout(newLayout);
                 Notification.show("Successfully edited!");
                 editEditor.setVisible(false);
-                Database.getInstance().updatePost(post.setHtml(editEditor.getHtmlValue()), false, false);
+                editEditor.setVisible(false);
+                Database.getInstance().updatePost(new PostBuilder().title(titleField.isEmpty() ? post.getTitle() : titleField.getValue())
+                        .created(post.getCreated()).lastUpdate(post.getLastUpdate())
+                        .category(checkboxCategory.getValue()).autoConfirm()
+                        .author(authorField.isEmpty() ? post.getAuthor() : authorField.getValue(), post.getAuthorID()).clickCounter(post.getClickCounter())
+                        .id(post.getID()).setHtml(editEditor.getHtmlValue()).build(), false, !acceptAndDecline);
             } else {
+                editButtonLayout.setVisible(true);
                 editEditor.setVisible(true);
             }
         });

@@ -192,7 +192,8 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         if (!currentPost.getAuthor().equals("")) titleAndAuthor.add(text);
 
         Paragraph times = new Paragraph(currentPost.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm")) +
-                " Uhr" + ((currentPost.getLastUpdate() != null) ? (", zuletzt bearbeitet: " + currentPost.getLastUpdate()) : ""));
+                " Uhr" + ((currentPost.getLastUpdate() != null) ?
+                (", zuletzt bearbeitet: " + currentPost.getLastUpdate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm"))) : ""));
         times.setId("post-times");
         contentGoesHere.add(titleAndAuthor);
         contentGoesHere.add(currentPost.getLayout());

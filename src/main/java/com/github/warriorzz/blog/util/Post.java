@@ -16,9 +16,9 @@ public class Post implements Comparable<Post> {
     private final String id;
     private double clickCounter;
     private String html;
-    private boolean confirmed = false;
+    private boolean confirmed;
 
-    public Post(VerticalLayout layout, String title, String author, String authorID, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html, double clickCounter){
+    public Post(VerticalLayout layout, String title, String author, String authorID, LocalDateTime created, LocalDateTime lastUpdate, String category, String id, String html, double clickCounter, boolean autoConfirm) {
         this.authorID = authorID;
         this.category = category;
         this.layout = layout;
@@ -29,6 +29,7 @@ public class Post implements Comparable<Post> {
         this.id = id;
         this.html = html;
         this.clickCounter = clickCounter;
+        this.confirmed = autoConfirm;
         layout.setId("post-layout");
     }
 
