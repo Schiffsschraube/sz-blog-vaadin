@@ -38,8 +38,7 @@ import java.util.Objects;
 public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
     private boolean initialized = false;
-    private VerticalLayout confirmLayout;
-
+    private VerticalLayout confirmLayout, editLayout;
 
     private void refresh() {
         confirmLayout.removeAll();
@@ -47,11 +46,22 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
             confirmLayout.add(new Span("Nothing in here. :)"));
         else {
             Accordion accordion = new Accordion();
-            Database.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).forEach(post -> addPostToConfirmLayout(post, accordion));
+            Database.getInstance().getPosts().stream().filter(post -> !post.isConfirmed()).forEach(post -> addPostToLayout(post, accordion, true));
             confirmLayout.add(accordion);
             accordion.close();
         }
         confirmLayout.setVisible(false);
+
+        editLayout.removeAll();
+        if(Database.getInstance().getPosts() == null || Database.getInstance().getPosts().stream().filter(Post::isConfirmed).toArray().length == 0)
+            editLayout.add(new Span("Nothing in here. :)"));
+        else {
+            Accordion accordion = new Accordion();
+            Database.getInstance().getPosts().stream().filter(Post::isConfirmed).forEach(post -> addPostToLayout(post, accordion, false));
+            editLayout.add(accordion);
+            accordion.close();
+        }
+        editLayout.setVisible(false);
     }
 
     private void initialize() throws IOException {
@@ -85,11 +95,13 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
 
         Tab confirmTab = new Tab("Confirm");
+        Tab editTab = new Tab("Edit");
 
         VerticalLayout contentGoesHere = new VerticalLayout();
 
         if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.ADMIN){
             tabs.add(confirmTab);
+            tabs.add(editTab);
         }
 
         Tab insertTab = new Tab("Insert");
@@ -98,6 +110,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         VerticalLayout insertLayout = new VerticalLayout();
         confirmLayout = new VerticalLayout();
+        editLayout = new VerticalLayout();
 
         Tab adminTab = new Tab("Admin-Bereich");
         if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.ADMIN){
@@ -106,6 +119,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         VerticalLayout adminLayout = new VerticalLayout();
         confirmLayout.setWidth("50vw");
+        editLayout.setWidth("50vw");
 
         Tab leaveTab = new Tab("Leave");
         tabs.add(leaveTab);
@@ -115,23 +129,35 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
                 confirmLayout.setVisible(false);
                 insertLayout.setVisible(true);
                 adminLayout.setVisible(false);
+                editLayout.setVisible(false);
             }
             if(event.getSelectedTab().equals(confirmTab)) {
                 confirmLayout.setVisible(true);
                 insertLayout.setVisible(false);
                 adminLayout.setVisible(false);
+                editLayout.setVisible(false);
             }
             if(event.getSelectedTab().equals(adminTab)){
                 confirmLayout.setVisible(false);
                 insertLayout.setVisible(false);
                 adminLayout.setVisible(true);
+                editLayout.setVisible(false);
             }
             if(event.getSelectedTab() .equals(leaveTab)) {
                 UI.getCurrent().navigate("");
             }
+            if(event.getSelectedTab().equals(editTab)) {
+                confirmLayout.setVisible(false);
+                insertLayout.setVisible(false);
+                adminLayout.setVisible(false);
+                editLayout.setVisible(true);
+            }
         });
 
         //CONFIRM
+        // -> refresh
+
+        //EDIT
         // -> refresh
 
         //INSERT
@@ -270,7 +296,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         adminLayout.add(categoryLayout);
 
         if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.ADMIN)
-            contentGoesHere.add(confirmLayout, insertLayout, adminLayout);
+            contentGoesHere.add(confirmLayout, editLayout, insertLayout, adminLayout);
         else if(UI.getCurrent().getSession().getAttribute(UserData.class).getRole() == UserData.Role.USER)
             contentGoesHere.add(insertLayout);
         content.add(contentGoesHere);
@@ -313,7 +339,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
         refresh();
     }
 
-    private void addPostToConfirmLayout(Post post, Accordion accordion) {
+    private void addPostToLayout(Post post, Accordion accordion, boolean acceptAndDecline) {
         VerticalLayout postLayout = new VerticalLayout();
 
         H2 heading = new H2(post.getTitle());
@@ -389,19 +415,21 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
 
         editButton.addClickListener(event -> {
             if(editEditor.isVisible()) {
-                Database.getInstance().updatePost(post.setHtml(editEditor.getHtmlValue()), false, false);
                 VerticalLayout newLayout = new VerticalLayout();
-                for(String html: editEditor.getHtmlValue().split("\r\n")) newLayout.add(new Html(html));
+                for(String html: editEditor.getHtmlValue().split("\n")) newLayout.add(new Html(html));
                 postLayout.replace(post.getLayout(), newLayout);
                 post.setLayout(newLayout);
+                Notification.show("Successfully edited!");
                 editEditor.setVisible(false);
+                Database.getInstance().updatePost(post.setHtml(editEditor.getHtmlValue()), false, false);
             } else {
                 editEditor.setVisible(true);
             }
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(acceptButton, declineButton, editButton);
+        if(acceptAndDecline) buttonLayout.add(acceptButton, declineButton);
+        buttonLayout.add(editButton);
 
         postLayout.add(buttonLayout);
         accordion.add(post.getTitle() + " - von " + post.getAuthor(), postLayout);
