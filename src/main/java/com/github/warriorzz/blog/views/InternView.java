@@ -437,7 +437,7 @@ public class InternView extends VerticalLayout implements BeforeEnterObserver {
                 postLayout.replace(post.getLayout(), newLayout);
                 post.setLayout(newLayout);
                 Notification.show("Successfully edited!");
-                editEditor.setVisible(false);
+                editButtonLayout.setVisible(false);
                 editEditor.setVisible(false);
                 Database.getInstance().updatePost(new PostBuilder().title(titleField.isEmpty() ? post.getTitle() : titleField.getValue())
                         .created(post.getCreated()).lastUpdate(post.getLastUpdate())
