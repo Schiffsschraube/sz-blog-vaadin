@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Route("")
 @JsModule("./styles/shared-styles.js")
 @CssImport("./styles/views/main/main-view.css")
-@PWA(name = "sz-blog-vaadin", shortName = "Schiffsschraube", enableInstallPrompt = false)
+@PWA(name = "Schiffsschraube", shortName = "Schiffsschraube", enableInstallPrompt = false)
 public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver, BeforeLeaveObserver {
 
     private boolean initialized = false;
