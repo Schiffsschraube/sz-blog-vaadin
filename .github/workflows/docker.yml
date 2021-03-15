@@ -20,5 +20,3 @@ jobs:
         run:  docker build -t warriorzz/sz-blog-vaadin:v1.1 -t warriorzz/sz-blog-vaadin:latest .
       - name: Push
         run:  docker push ${{ secrets.DOCKER_USER }}/sz-blog-vaadin:latest
-      - name: Push specific tag
-        run:  docker push ${{ secrets.DOCKER_USER }}/sz-blog-vaadin:v1.1
