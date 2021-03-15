@@ -17,7 +17,7 @@ public class LogIn extends VerticalLayout implements BeforeLeaveObserver {
 
     private final LoginOverlay overlay;
 
-    public LogIn(){
+    public LogIn() {
         LoginI18n login = LoginI18n.createDefault();
         overlay = new LoginOverlay();
 
@@ -38,7 +38,7 @@ public class LogIn extends VerticalLayout implements BeforeLeaveObserver {
 
     public void passCredentials(String username, String password) {
         UserData data = Database.getInstance().getUser(new UserData.UserLogin(username, password));
-        if (data == null){
+        if (data == null) {
             overlay.setError(true);
             return;
         }
@@ -47,7 +47,7 @@ public class LogIn extends VerticalLayout implements BeforeLeaveObserver {
         overlay.close();
     }
 
-    public void forgotPassword(){
+    public void forgotPassword() {
 
     }
 

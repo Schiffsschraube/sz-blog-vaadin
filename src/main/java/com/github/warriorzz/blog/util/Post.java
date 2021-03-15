@@ -53,17 +53,29 @@ public class Post implements Comparable<Post> {
         return lastUpdate;
     }
 
-    public String getCategory(){ return category; }
+    public String getCategory() {
+        return category;
+    }
 
-    public String getID() { return id; }
+    public String getID() {
+        return id;
+    }
 
-    public boolean isConfirmed() { return confirmed; }
+    public boolean isConfirmed() {
+        return confirmed;
+    }
 
-    public String getHtml() { return html; }
+    public String getHtml() {
+        return html;
+    }
 
-    public String getAuthorID() { return authorID; }
+    public String getAuthorID() {
+        return authorID;
+    }
 
-    public double getClickCounter() { return clickCounter; }
+    public double getClickCounter() {
+        return clickCounter;
+    }
 
     public Post setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
@@ -87,8 +99,8 @@ public class Post implements Comparable<Post> {
 
     @Override
     public int compareTo(Post o) {
-        if(o.getCreated().equals(created)) return 0;
-        if(o.getCreated().isBefore(created)) return -1;
+        if (o.getCreated().equals(created)) return 0;
+        if (o.getCreated().isBefore(created)) return -1;
         return 1;
     }
 }

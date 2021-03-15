@@ -237,8 +237,8 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             initialized = true;
         }
         refresh();
-        for(String pushId: clicks.keySet()) {
-            if(clicks.get(pushId).checkTimeStamp(30 * 1000)) {
+        for (String pushId : clicks.keySet()) {
+            if (clicks.get(pushId).checkTimeStamp(30 * 1000)) {
                 clicks.get(pushId).addClick();
             }
         }

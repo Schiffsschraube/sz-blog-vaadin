@@ -36,8 +36,8 @@ public class Database {
 
     public UserData getUser(UserData.UserLogin login) {
         Document userDocument = userCollection.find(new Document("username", GFG.sha512(login.getUsername()))).first();
-        if(userDocument == null) return null;
-        if(Objects.requireNonNull(userDocument).get("password").equals(GFG.sha512(login.getPassword())))
+        if (userDocument == null) return null;
+        if (Objects.requireNonNull(userDocument).get("password").equals(GFG.sha512(login.getPassword())))
             return new UserData(true, UserData.Role.fromString(String.valueOf(userDocument.get("role"))), userDocument.get("_id").toString());
         return null;
     }
@@ -45,11 +45,11 @@ public class Database {
     public ArrayList<Post> getPosts() {
         ArrayList<Document> documents = new ArrayList<>();
         postCollection.find().forEach(documents::add);
-        if(documents.size() == 0) return null;
+        if (documents.size() == 0) return null;
 
         ArrayList<Post> posts = new ArrayList<>();
 
-        for(Document document: documents){
+        for (Document document : documents) {
             PostBuilder builder = new PostBuilder();
             builder.category((String) document.get("category"));
             builder.author((String) document.get("author"), document.get("authorId") == null ? "" : document.get("authorId").toString());
@@ -57,10 +57,10 @@ public class Database {
             builder.created(LocalDateTime.parse((String) document.get("created")));
             builder.title((String) document.get("title"));
             builder.id(document.get("_id").toString());
-            builder.clickCounter(document.get("clicks") == null? 0 : Double.parseDouble(document.get("clicks").toString()));
-            for(String line: ((String) document.get("html")).split("\n")){
-                for(String line2: line.split("</p>")) {
-                    if(line2.startsWith("<p>"))
+            builder.clickCounter(document.get("clicks") == null ? 0 : Double.parseDouble(document.get("clicks").toString()));
+            for (String line : ((String) document.get("html")).split("\n")) {
+                for (String line2 : line.split("</p>")) {
+                    if (line2.startsWith("<p>"))
                         builder.html(new Html(line2 + "</p>"));
                     else
                         builder.html(new Html(line2));
@@ -75,7 +75,7 @@ public class Database {
         Document document = new Document();
         document.put("password", GFG.sha512(login.getPassword()));
         document.put("username", GFG.sha512(login.getPassword()));
-        if(login.getRole() != null) document.put("role", login.getRole().name());
+        if (login.getRole() != null) document.put("role", login.getRole().name());
         userCollection.insertOne(document);
     }
 
@@ -85,7 +85,7 @@ public class Database {
         document.put("title", post.getTitle());
         document.put("author", post.getAuthor());
         document.put("authorId", post.getAuthorID());
-        document.put("lastupdate", post.getLastUpdate() == null? null : post.getLastUpdate().toString());
+        document.put("lastupdate", post.getLastUpdate() == null ? null : post.getLastUpdate().toString());
         document.put("created", post.getCreated().toString());
         document.put("category", post.getCategory());
         document.put("html", html);
@@ -95,12 +95,12 @@ public class Database {
         postCollection.insertOne(document);
     }
 
-    public ArrayList<String> getCategories(){
+    public ArrayList<String> getCategories() {
         ArrayList<String> categories = new ArrayList<>();
         Document map = categoryCollection.find().first();
         assert map != null;
         map.keySet().forEach(it -> {
-            if(!it.equals("_id")) categories.add(map.get(it).toString());
+            if (!it.equals("_id")) categories.add(map.get(it).toString());
         });
         return categories;
     }
@@ -129,7 +129,7 @@ public class Database {
         document.put("title", post.getTitle());
         document.put("author", post.getAuthor());
         document.put("authorId", post.getAuthorID());
-        document.put("lastupdate", post.getLastUpdate() == null? null : post.getLastUpdate().toString());
+        document.put("lastupdate", post.getLastUpdate() == null ? null : post.getLastUpdate().toString());
         document.put("created", post.getCreated().toString());
         document.put("category", post.getCategory());
         document.put("html", post.getHtml());
@@ -145,8 +145,8 @@ public class Database {
         categoryCollection.deleteOne(new Document("_id", Objects.requireNonNull(categoryCollection.find().first()).get("_id")));
         Document document = new Document("0", categories.get(0));
         int count = 0;
-        for(String categoryS: categories) {
-            if(count == 0) {
+        for (String categoryS : categories) {
+            if (count == 0) {
                 count++;
                 continue;
             }
@@ -157,8 +157,9 @@ public class Database {
     }
 
     private static Database instance;
-    public static Database getInstance(){
-        if(instance == null) instance = new Database();
+
+    public static Database getInstance() {
+        if (instance == null) instance = new Database();
         return instance;
     }
 }

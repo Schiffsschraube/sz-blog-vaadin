@@ -14,5 +14,6 @@ public class Config {
     public static String START_ARTICLE_NAME = dotenv.get("START_ARTICLE_NAME");
     public static String IMPRESSUM_NAME = dotenv.get("IMPRESSUM_NAME");
 
-    private Config() {}
+    private Config() {
+    }
 }
