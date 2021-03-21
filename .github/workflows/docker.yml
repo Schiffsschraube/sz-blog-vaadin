@@ -17,8 +17,8 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run:  docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - name: Build & Tag
-        run:  docker build -t warriorzz/sz-blog-vaadin:v1.1 -t warriorzz/sz-blog-vaadin:latest .
+        run:  docker build -t warriorzz/sz-blog-vaadin:tag-"$GITHUB_SHA" -t warriorzz/sz-blog-vaadin:latest .
       - name: Push latest
         run:  docker push ${{ secrets.DOCKER_USER }}/sz-blog-vaadin:latest
       - name: Push specific tag
-        run:  docker push ${{ secrets.DOCKER_USER }}/sz-blog-vaadin:"$GITHUB_SHA"
+        run:  docker push ${{ secrets.DOCKER_USER }}/sz-blog-vaadin:tag-"$GITHUB_SHA"
