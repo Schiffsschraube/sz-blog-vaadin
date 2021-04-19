@@ -13,6 +13,7 @@ public class Config {
     public static String MONGO_DATABASE = dotenv.get("MONGO_DATABASE");
     public static String START_ARTICLE_NAME = dotenv.get("START_ARTICLE_NAME");
     public static String IMPRESSUM_NAME = dotenv.get("IMPRESSUM_NAME");
+    public static String FURTHERMORE_NAME = dotenv.get("FURTHERMORE_NAME");
 
     private Config() {
     }

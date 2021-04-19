@@ -18,7 +18,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.*;
-import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.StreamResource;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 @Route("")
 @JsModule("./styles/shared-styles.js")
 @CssImport("./styles/views/main/main-view.css")
-@PWA(name = "Schiffsschraube", shortName = "Schiffsschraube", enableInstallPrompt = false)
 public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver, BeforeLeaveObserver {
 
     private boolean initialized = false;
@@ -145,6 +143,9 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
         Tab impressum = new Tab("Impressum");
         impressumEtc.add(impressum);
 
+        Tab furtherMore = new Tab("Weiteres");
+        impressumEtc.add(furtherMore);
+
         Tab intern = new Tab("Intern");
         impressumEtc.add(intern);
 
@@ -156,6 +157,9 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
             }
             if (event.getSelectedTab().equals(impressum)) {
                 setCurrentPostToImpressum();
+            }
+            if (event.getSelectedTab().equals(furtherMore)) {
+                setCurrentPostToFurtherMore();
             }
             if (event.getSelectedTab().equals(intern)) UI.getCurrent().navigate("intern");
             for (Tabs tabs2 : tabsList.values()) {
@@ -218,6 +222,12 @@ public class MainView extends VerticalLayout implements HasDynamicTitle, BeforeE
     private void setCurrentPostToImpressum() {
         if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Config.IMPRESSUM_NAME)))
             currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Config.IMPRESSUM_NAME)).findFirst().get();
+        refreshPost();
+    }
+
+    public void setCurrentPostToFurtherMore() {
+        if (Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).anyMatch(post -> post.getTitle().equals(Config.FURTHERMORE_NAME)))
+            currentPost = Database.getInstance().getPosts().stream().filter(post -> post.getCategory().equals("")).filter(post -> post.getTitle().equals(Config.FURTHERMORE_NAME)).findFirst().get();
         refreshPost();
     }
 
