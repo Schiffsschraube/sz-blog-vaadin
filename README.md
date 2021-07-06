@@ -1,5 +1,7 @@
 # sz-blog-vaadin
 
+# Archived because of shut down.
+
 This project is the website of the schools news paper schiffsschraube. 
 
 The project is a standard Maven project, so you can import it to your IDE of choice. [Read more how to set up a development environment](https://vaadin.com/docs/v14/flow/installing/installing-overview.html) for Vaadin projects (Windows, Linux, macOS). 
